@@ -1,22 +1,54 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import Module from '@/Components/Module.vue'
+import { Head, Link } from '@inertiajs/vue3';
 </script>
 
 <template>
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
-        </template>
-
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
-                </div>
+    <div class="my-6">
+        <section class="bg-white dark:bg-gray-900">
+            <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Transport</h2>
+            <div class="flex">
+                <Module link="vehicles.index">
+                    Gestion des Vehicules 
+                </Module>
+                <Module link="drivers.index">
+                    Gestion des Chauffeurs 
+                </Module>
+                <Module link="terminals.index"> 
+                    Gestion des Terminals (Paradas)
+                </Module>
             </div>
-        </div>
-    </AuthenticatedLayout>
+        </section>
+        <section class="bg-white dark:bg-gray-900">
+            <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Ressources humaines</h2>
+            <div class="grid grid-cols-3">
+                <Module link="users.index"> 
+                    Gestion des Utilisateurs
+                </Module>
+                <Module link="projects.index">
+                    Gestion des Projets
+                </Module>
+                <Module link="positions.index">
+                    Gestion des Postes
+                </Module>
+                <Module link="teams.index">
+                    Gestion des Teams
+                </Module>
+                <Module link="stations.index">
+                    Gestion des Stations
+                </Module>
+                <Module link="departments.index">
+                    Gestion des Departments
+                </Module>
+                <Module link="employees.index">
+                    Gestion des Employés
+                </Module>
+            </div>
+            </section>
+    </div>        
+</AuthenticatedLayout>
 </template>

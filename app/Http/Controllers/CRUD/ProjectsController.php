@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Controllers\CRUD;
+
+use App\Http\Controllers\Controller;
+use App\Models\Project;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+
+class ProjectsController extends Controller
+{
+    public function index(Request $request){
+        $search = $request->input('search');
+        // validating if the $search variable is not empty
+        if($search){
+            $items = Project::where('name', 'LIKE', "%{$search}%")
+            ->get();
+        }else{
+            $items = Project::all();
+        }
+            return Inertia::render('HumanRessources/Projects/projects', ['projects' => $items]);
+    }
+
+    public function create(Request $request){
+        // form validation
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:projects',
+            'details' => 'string',
+        ]);
+        // creating data
+        $item = new Project();
+        $item->name = $validatedData['name'];
+        $item->details = $validatedData['details'];
+        $item->save();
+        // returning updated data to the form
+        return to_route('projects.index');
+    }
+
+    public function destroy($id){
+        // Find the item by id
+        $item = Project::find($id);
+        
+        if (!$item) {
+            return to_route('projects.index')->with(['message' => 'Project not found']);
+        }
+        // Delete the item
+        $item->delete();
+    
+        return to_route('projects.index');
+    }
+
+    public function edit($id){
+        $item = Project::find($id);
+        return Inertia::render('HumanRessources/Projects/edit', ['project' => $item]);
+    }
+
+    public function update(Request $request, $id){
+        // form validation
+        $validatedData = $request->validate([
+            'name' => ['required','string', 'max:255',Rule::unique('projects')->ignore($id)],
+            'details' => 'string',
+        ]);
+        $item = Project::find($id);
+        $item->name = $validatedData['name'];
+        $item->details = $validatedData['details'];
+        $item->save();
+        // returning updated data to the form
+        return to_route('projects.index');
+    }
+}
