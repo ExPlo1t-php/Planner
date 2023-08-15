@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -12,6 +13,7 @@ class DepartmentsController extends Controller
 {
     public function index(Request $request){
         $search = $request->input('search');
+        $positions = Position::get();
         // validating if the $search variable is not empty
         if($search){
             $items = Department::where('name', 'LIKE', "%{$search}%")
@@ -20,7 +22,7 @@ class DepartmentsController extends Controller
         }else{
             $items = Department::all();
         }
-            return Inertia::render('HumanRessources/Departments/departments', ['departments' => $items]);
+            return Inertia::render('HumanRessources/Departments/departments', ['departments' => $items, 'positions'=>$positions]);
     }
 
     public function create(Request $request){
@@ -28,11 +30,14 @@ class DepartmentsController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:departments',
             'info' => 'string|nullable',
+            'positions' => 'nullable',
         ]);
         // creating data
+        $positions = json_encode($request->input('positions'));
         $item = new Department();
         $item->name = $validatedData['name'];
         $item->info = $validatedData['info'];
+        $item->positions = $positions;
         $item->save();
         // returning updated data to the form
         return to_route('departments.index');
@@ -52,8 +57,9 @@ class DepartmentsController extends Controller
     }
 
     public function edit($id){
+        $positions = Position::all();
         $item = Department::find($id);
-        return Inertia::render('HumanRessources/Departments/edit', ['department' => $item]);
+        return Inertia::render('HumanRessources/Departments/edit', ['department' => $item, 'positions'=>$positions]);
     }
 
     public function update(Request $request, $id){
@@ -61,10 +67,13 @@ class DepartmentsController extends Controller
         $validatedData = $request->validate([
             'name' => ['required','string', 'max:255',Rule::unique('departments')->ignore($id)],
             'info' => 'string|nullable',
+            'positions' => 'nullable',
         ]);
+        $positions = json_encode($request->input('positions'));
         $item = Department::find($id);
         $item->name = $validatedData['name'];
         $item->info = $validatedData['info'];
+        $item->positions = $positions;
         $item->save();
         // returning updated data to the form
         return to_route('departments.index');

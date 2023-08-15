@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal } from 'flowbite-vue'
     import InputError from '@/Components/InputError.vue';
@@ -51,7 +52,7 @@
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel chauffeur
                     </button>
                 </div>  
@@ -110,21 +111,21 @@
                             <InputError class="mt-2" :message="form.errors.vehicle_number" />
                         </div>
                         
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
-                        <Link :href="route('vehicles.index')" class="hover:text-indigo-500 text-sm m-4 ">Ajouter une nouvelle vehicule</Link>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <Link :href="route('vehicles.index')" class="hover:text-gray-500 text-sm m-4 ">Ajouter une nouvelle vehicule</Link>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Prenom</TableHeadItem>
-                        <TableHeadItem>Nom</TableHeadItem>
-                        <TableHeadItem>Nombre de transport</TableHeadItem>
+                        <TableHeadItem @click="sortTable(drivers, 'first_name')">Prenom</TableHeadItem>
+                        <TableHeadItem @click="sortTable(drivers, 'last_name')">Nom</TableHeadItem>
+                        <TableHeadItem @click="sortTable(drivers, 'vehicle_number')">Nombre de transport</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="drivers && drivers.length > 0">
-                        <TableRow v-for="driver in drivers" :key="driver.id">
+                        <template v-if="drivers.data && drivers.data.length > 0">
+                        <TableRow v-for="driver in sortedItems" :key="driver.id">
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ driver.first_name }}</div>
                             </TableRowItem>
@@ -151,6 +152,8 @@
                     </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="drivers.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -160,7 +163,7 @@
 export default {
     props: {
         drivers: {
-            type: Array,
+            type: Object,
         },
         vehicles: {
             type: Array,
@@ -172,19 +175,50 @@ export default {
                 first_name: '',
                 last_name: '',
                 vehicle_number: '',
-            }
+            },
+            sortKey: '',
+            sortDirection: 'asc',
         }
     },
     methods:{
         isRegistrationTaken(registrationNumber) {
-      // Check if the registrationNumber is already taken by a driver
-      return this.drivers.some((driver) => driver.vehicle_number === registrationNumber);
+            // Check if the registrationNumber is already taken by a driver
+            return this.drivers.data.some((driver) => driver.vehicle_number === registrationNumber);
+        },
+        navigateToLink() {
+            const url = route('vehicles.index'); 
+            router.push(url);
+        },
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+        },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.drivers.data);
+        },
     },
-    navigateToLink() {
-      const url = route('vehicles.index'); 
-      router.push(url);
-    },
-    },
-    components: { DeleteLink, Link }
+    components: { DeleteLink, Link, Pagination }
 };
 </script>

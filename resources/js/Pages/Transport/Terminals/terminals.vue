@@ -53,7 +53,7 @@
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Parada
                     </button>
                 </div>  
@@ -105,10 +105,10 @@
                                 autofocus
                             >
                             <option selected disabled hidden value="">Choisir un trajet</option>
-                            <option value="Shift Administrative">Shift Administrative</option>
-                            <option value="Shift 1">Shift 1</option>
-                            <option value="Shift 2">Shift 2</option>
-                            <option value="Shift 3">Shift 3</option>
+                            <option value="Shift Administrative">Shift Administrative (8h-18h)</option>
+                            <option value="Shift Matin (07h-15h)">Shift Matin (07h-15h)</option>
+                            <option value="Shift Soir (15h-23h)">Shift Soir (15h-23h)</option>
+                            <option value="Shift Nuit (23h-7h)">Shift Nuit (23h-7h)</option>
                             </SelectInput>
 
                             <InputError class="mt-2" :message="form.errors.trajet" />
@@ -132,21 +132,21 @@
                             <InputError class="mt-2" :message="form.errors.vehicle_number" />
                         </div>
                         
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Nom de Parada</TableHeadItem>
-                        <TableHeadItem>Adresse</TableHeadItem>
-                        <TableHeadItem>Trajet</TableHeadItem>
-                        <TableHeadItem>Numéro de véhicule</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals, 'name')">Nom de Parada</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals, 'address')">Adresse</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals, 'trajet')">Trajet</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals, 'vehicle_number')">Numéro de véhicule</TableHeadItem>
                     </TableHead>
                     <TableBody>
                         <template v-if="terminals && terminals.length > 0">
-                        <TableRow v-for="terminal in terminals" :key="terminal.id">
+                        <TableRow v-for="terminal in sortedItems" :key="terminal.id">
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ terminal.name }}</div>
                             </TableRowItem>
@@ -197,10 +197,41 @@ export default {
                 name: '',
                 address: '',
                 vehicle_number: '',
-            }
+            },
+            sortKey: '',
+            sortDirection: 'asc',
         }
     },
     methods:{
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+        },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.terminals);
+        },
     },
     components: { DeleteLink }
 };

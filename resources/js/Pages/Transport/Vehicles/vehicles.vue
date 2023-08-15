@@ -34,7 +34,7 @@
     })
     const submit = () => {
         form.post(route('vehicles.create'), {
-            onSuccess: () => {form.reset('registration_number' ,'registration_number', 'entree_date')},
+            onSuccess: () => {form.reset('bus_number' ,'registration_number', 'entree_date')},
         });
     }
     // search
@@ -52,17 +52,17 @@
                 <!-- Modal toggle -->
                 <div class="flex justify-between justify-end items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter une nouvelle Vehicule
                     </button>
                 </div>  
                 <!-- Main modal -->
-                <Modal size="md" v-if="isShowModal" @close="closeModal">
+                <Modal size="2xl" v-if="isShowModal" @close="closeModal">
                     <template #header>
                         <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Ajouter un nouvel utilisateur</h3>
                     </template>
                     <template #body>
-                        <form @submit.prevent="submit">
+                        <form @submit.prevent="submit" class="px-16">
                         <div>
                             <InputLabel for="bus_number" value="Numero de Transport" />
 
@@ -109,20 +109,20 @@
                         </div>
 
                         
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of vehicles in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Numero de transport</TableHeadItem>
-                        <TableHeadItem>Matricule</TableHeadItem>
-                        <TableHeadItem>Date d'entree</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles, 'bus_number')">Numero de transport</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles, 'registration_number')">Matricule</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles, 'entree_date')">Date d'entree</TableHeadItem>
                     </TableHead>
                     <TableBody>
                         <template v-if="vehicles && vehicles.length > 0">
-                            <TableRow v-for="vehicle in vehicles" :key="vehicle.id">
+                            <TableRow v-for="vehicle in sortedItems" :key="vehicle.id">
                                 <TableRowItem class="px-6 py-4">
                                     <div class="text-black">{{ vehicle.bus_number }}</div>
                                 </TableRowItem>
@@ -159,6 +159,43 @@ export default {
     props: {
         vehicles: {
             type: Array,
+        },
+    },
+    data(){
+        return{
+            sortKey: '',
+            sortDirection: 'asc',
+        }
+    },
+    methods:{
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+        },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.vehicles);
         },
     },
     components: { DeleteLink, EditLink, SearchBar }

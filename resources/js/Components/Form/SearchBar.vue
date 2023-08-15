@@ -1,6 +1,6 @@
 <template>
         <input
-            class="border border-gray-300 rounded-lg px-2 lg:w-80"
+            class="border border-gray-300 rounded-lg px-2 lg:w-40"
             type="search"
             name="search"
             placeholder="Recherche"

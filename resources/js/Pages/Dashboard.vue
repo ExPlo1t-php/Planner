@@ -2,16 +2,26 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Module from '@/Components/Module.vue'
 import { Head, Link } from '@inertiajs/vue3';
+import Sidebar from '@/Components/Sidebar.vue';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
+
 </script>
 
 <template>
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-    <div class="my-6">
+    <!-- <button @click="toggleSidebar">Toggle Sidebar</button> -->
+    <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
+        <Module link="vehicles.index">
+                    Gestion des Vehicules 
+                </Module>
+    </Sidebar>
+
+    <div class="my-6 max-w-7xl m-auto">
         <section class="bg-white dark:bg-gray-900">
             <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Transport</h2>
-            <div class="flex">
+            <div class="grid lg:grid-cols-4 md:grid-cols-3">
                 <Module link="vehicles.index">
                     Gestion des Vehicules 
                 </Module>
@@ -25,7 +35,7 @@ import { Head, Link } from '@inertiajs/vue3';
         </section>
         <section class="bg-white dark:bg-gray-900">
             <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Ressources humaines</h2>
-            <div class="grid grid-cols-3">
+            <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2">
                 <Module link="users.index"> 
                     Gestion des Utilisateurs
                 </Module>
@@ -52,3 +62,23 @@ import { Head, Link } from '@inertiajs/vue3';
     </div>        
 </AuthenticatedLayout>
 </template>
+    <script>
+export default {
+  components: {
+    Sidebar,
+  },
+  data() {
+    return {
+      isSidebarCollapsed: true,
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    },
+    toggleSidebarState(isCollapsed) {
+      this.isSidebarCollapsed = isCollapsed;
+    },
+  },
+};
+</script>

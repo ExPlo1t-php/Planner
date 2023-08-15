@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('vehicle_number')->nullable();
             $table->timestamps();
     
-            $table->foreign('vehicle_number')->references('bus_number')->on('vehicles')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreign('vehicle_number')->references('bus_number')->on('vehicles')->restrictOnDelete()->cascadeOnUpdate();
         });
     }
 

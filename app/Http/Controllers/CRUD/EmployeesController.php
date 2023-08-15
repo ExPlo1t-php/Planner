@@ -18,36 +18,80 @@ use Inertia\Inertia;
 class EmployeesController extends Controller
 {
     public function index(Request $request){
-        $search = $request->input('search');
-        // validating if the $search variable is not empty
-        if($search){
-            $items = Employee::where('first_name', 'LIKE', "%{$search}%")
-            ->orWhere('last_name', 'LIKE', "%{$search}%")
-            ->orWhere('employee_number', 'LIKE', "%{$search}%")
-            ->get();
-        }else{
-            $items = Employee::all();
+        // filter query
+        $query = Employee::query();
+        $teamsQ = Team::query();
+        // filtering with search
+        if($request->has('search')){
+            $search = $request->query('search');
+            $query->where(function ($q) use ($search){
+                $q->where('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%")
+                ->orWhere('employee_number', 'LIKE', "%{$search}%");
+            });
+            // other filters
         }
+        // adding department filter
+        if ($request->has('department')) {
+            $department = $request->query('department');
+            $query->where('department_id', $department);
+        }
+        // adding project filter
+        if ($request->has('project')) {
+            $project = $request->query('project');
+            $query->where('project_id', $project);
+        }
+        // adding team filter
+        if ($request->has('team')) {
+            $team = $request->query('team');
+            $query->where('team_id', $team);
+        }
+        // adding position filter
+        if ($request->has('position')) {
+            $position = $request->query('position');
+            $query->where('position_id', $position);
+        }
+        $items = $query->paginate(10);
+        $filtered_teams = $teamsQ->get();
+        
+        $stationsQM = Station::query();
+        $teamsQM = Team::query();
+        if ($request->has('projectM')){
+            $projectM = $request->query('projectM');
+            // Query Modal
+            $stationsQM->where('project_id', $projectM);
+            $teamsQM->where('project_id', $projectM);
+        }
+        $filtered_stations_modal = $stationsQM->get();
+        $filtered_teams_modal = $teamsQM->get();
+        
+        // other data fetching
         // this has to change !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         $leaders = Employee::select('id', 'first_name')->get();
         // this has to change
-        $departments = Department::select('id', 'name')->get();
+        $departments = Department::select('id', 'name', 'positions')->get();
         $projects = Project::select('id', 'name')->get();
         $positions = Position::select('id', 'name')->get();
-        $stations = Station::select('id', 'name')->get();
         $teams = Team::select('id', 'name')->get();
         $terminals = Terminal::select('id', 'name')->get();
+        $stations = Station::select('id', 'name')->get();     
+
         return Inertia::render('HumanRessources/Employees/employees',
-                                ['employees' => $items,
-                                 'leaders' => $leaders,
-                                 'departments' => $departments,
-                                 'projects' => $projects,
-                                 'positions' => $positions,
-                                 'stations' => $stations,
-                                 'teams' => $teams,
-                                 'terminals' => $terminals,
-                                ]);
+        ['employees' => $items,
+            'leaders' => $leaders,
+            'departments' => $departments,
+            'projects' => $projects,
+            'positions' => $positions,
+            'stations' => $stations,
+            'teams' => $teams,
+            'terminals' => $terminals,
+        //  filtered data
+            'teamsF'=>$filtered_teams,
+            'stationsFM'=>$filtered_stations_modal,
+            'teamsFM'=>$filtered_teams_modal,
+        ]);
     }
+
 
     public function create(Request $request){
         // form validation
@@ -55,10 +99,10 @@ class EmployeesController extends Controller
             'employee_number' => 'required|string|max:255|unique:employees',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'department_id' => 'integer',
-            'project_id' => 'integer',
-            'position_id' => 'integer',
-            'station_id' => 'integer',
+            'department_id' => 'integer|nullable',
+            'project_id' => 'integer|nullable',
+            'position_id' => 'integer|nullable',
+            'station_id' => 'integer|nullable',
             'team_leader_manager_id' => 'integer|nullable',
             'team_id' => 'integer|nullable',
             'terminal_id' => 'integer|nullable',
@@ -67,11 +111,6 @@ class EmployeesController extends Controller
         // image validation
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
             $originalFilename = $request->photo->getClientOriginalName();
-        // unused code -----
-            // $fileExtension = $request->photo->getClientOriginalExtension();
-            // $imagePath = $imageName . '.' . $fileExtension;
-            // $imagePath = $request->photo->getClientOriginalName();
-        // unused code -----
             $imageName = time() . '_' . str_replace(' ', '_', $originalFilename);
             $request->file('photo')->move(public_path('/employees/'), $imageName);
         } else {
@@ -116,7 +155,7 @@ class EmployeesController extends Controller
         // this has to change !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         $leaders = Employee::select('id', 'first_name')->where('position_id', 'LIKE', 2)->get();
         // this has to change
-        $departments = Department::select('id', 'name')->get();
+        $departments = Department::select('id', 'name', 'positions')->get();
         $projects = Project::select('id', 'name')->get();
         $positions = Position::select('id', 'name')->get();
         $stations = Station::select('id', 'name')->get();
@@ -140,22 +179,21 @@ class EmployeesController extends Controller
         'employee_number' => ['required','string', 'max:255',Rule::unique('employees')->ignore($id)],
         'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
-        'department_id' => 'integer',
-        'project_id' => 'integer',
-        'position_id' => 'integer',
-        'station_id' => 'integer',
+        'department_id' => 'integer|nullable',
+        'project_id' => 'integer|nullable',
+        'position_id' => 'integer|nullable',
+        'station_id' => 'integer|nullable',
         'team_leader_manager_id' => 'integer|nullable',
         'team_id' => 'integer|nullable',
         'terminal_id' => 'integer|nullable',
-        'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048|nullable'
-        ]);
+        'photo' => 'nullable']);
         // image validation
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
             $originalFilename = $request->photo->getClientOriginalName();
             $imageName = time() . '_' . str_replace(' ', '_', $originalFilename);
             $request->file('photo')->move(public_path('/employees/'), $imageName);
         } else {
-            $imageName = null; // Setting the path to null if no image is uploaded
+            $imageName = $request->input('photo'); // if no image is uploaded keep the current imagename; 
         }
         // fetching/updating data
         $item = Employee::find($id);

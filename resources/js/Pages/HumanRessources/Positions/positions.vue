@@ -43,20 +43,20 @@
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Projects management"/>
+        <Head title="Position management"/>
         <div class="py-12 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
-                        Ajouter un nouvel Poste
+                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                        Ajouter un nouvel Position
                     </button>
                 </div>  
                 <!-- Main modal -->
                 <Modal size="md" v-if="isShowModal" @close="closeModal">
                     <template #header>
-                        <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Ajouter un nouvel Poste</h3>
+                        <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Ajouter un nouvel Position</h3>
                     </template>
                     <template #body>
                         <form @submit.prevent="submit">
@@ -75,22 +75,18 @@
 
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Nom de Position</TableHeadItem>
-                        <TableHeadItem>Detail de Position</TableHeadItem>
+                        <TableHeadItem @click="sortTable(positions, 'name')">Nom de Position</TableHeadItem>
                     </TableHead>
                     <TableBody>
                         <template v-if="positions && positions.length > 0">
-                        <TableRow v-for="position in positions" :key="position.id">
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ position.name }}</div>
-                            </TableRowItem>
+                        <TableRow v-for="position in sortedItems" :key="position.id">
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ position.name }}</div>
                             </TableRowItem>
@@ -105,7 +101,7 @@
                     <template v-else>
                     <TableRow>
                         <TableRowItem class="px-6 py-4" colspan="4">
-                            Aucun poste trouvé, cliquez sur ajouter un poste pour en ajouter un poste
+                            Aucun position trouvé, cliquez sur ajouter un position pour en ajouter un position
                         </TableRowItem>
                     </TableRow>
                     </template>
@@ -127,10 +123,41 @@ export default {
         return{
             form: {
                 name: '',
-            }
+            },
+            sortKey:'',
+            sortDirection:'asc',
         }
     },
     methods:{
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+    },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.positions);
+        },
     },
     components: { DeleteLink, Link }
 };

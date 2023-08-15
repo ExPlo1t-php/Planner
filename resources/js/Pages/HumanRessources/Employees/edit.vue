@@ -32,6 +32,44 @@
             onSuccess: () => {form.reset("photo", "first_name", "last_name", "employee_number", "terminal_id")},
         });
     }
+    // form filtering
+    const reset = () => {
+        form.project_id=null;
+        form.station_id=null;
+        form.team_id=null;
+    };
+    watch(() => form.department_id,
+    (value) =>{
+        reset()
+        console.log(value);
+    }
+    )
+
+    // ------------------------
+    const getNameById = (object, id) => {
+            if(id!== null){
+                const foundObject = object.find(obj => obj.id == id);
+                console.log(foundObject)
+                if (foundObject.name){
+                    return foundObject ? foundObject.name : null;
+                }else{
+                    return foundObject ? foundObject.first_name : null;
+                }
+            }
+    }
+    const getDepartmentPositions = (departments, name) => {
+        // this  method fetches the  positions  available   in  the selected department 
+        const department = departments.find(department => department.name === name);
+        return JSON.parse(department.positions)
+    }
+    const getPositions = (positions, departmentPos) => {
+        // this  method takes an array of department positions from "getDepartmentPositions"
+        // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
+        const filteredData = positions.filter(object =>
+        departmentPos.includes(object.name)
+        );
+        return filteredData
+    }
 </script>
 
 <template>
@@ -103,7 +141,7 @@
 
                     <InputError class="mt-2" :message="form.errors.department_id" />
                 </div>
-                <div>
+                <div v-if="form.department_id == 2">
                     <InputLabel for="project_id" value="Projet " />
 
                     <SelectInput
@@ -122,7 +160,7 @@
                     <InputError class="mt-2" :message="form.errors.project_id" />
                 </div>
                 <div>
-                    <InputLabel for="position_id" value="Poste " />
+                    <InputLabel for="position_id" value="Position" />
 
                     <SelectInput
                         id="position_id"
@@ -131,15 +169,21 @@
                         required
                         autofocus
                     >
-                    <option selected disabled hidden value="">Choisir un Poste</option>
-                        <template v-for="position in positions">
+                    <option selected disabled hidden value="">Choisir un Position</option>
+                    <template v-if="form.department_id">
+                        <template v-for="position in getPositions(positions, getDepartmentPositions(departments, getNameById(departments, form.department_id)))">
                             <option :value="position.id">{{ position.name }}</option>
                         </template>
+                    </template>
+                    <template v-else>
+                        <option value="" disabled>Aucun Position (veuillez choisir une departement)</option>
+                    </template>
+                    
                     </SelectInput>
 
                     <InputError class="mt-2" :message="form.errors.position_id" />
                 </div>
-                <div>
+                <div v-if="form.department_id == 2 || form.department_id == 1">
                     <InputLabel for="station_id" value="Station " />
 
                     <SelectInput
@@ -180,7 +224,7 @@
 
                     <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                 </div>
-                <div>
+                <div v-if="form.department_id == 2 || form.department_id == 1">
                     <InputLabel for="team_id" value="Team" />
 
                     <SelectInput
@@ -223,16 +267,13 @@
                         v-model="form.photo"
                         autofocus
                     >
-                        <p class="!mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
                     </FileInput>
 
                     <InputError class="mt-2" :message="form.errors.photo" />
                 </div>
                 <div class="flex ">
-                    <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
-                    <Link :href="route('employees.index')" class="w-full text-black bg-white border-2 hover:border-indigo-500 border  focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Annuler</Link>
+                    <button type="submit" class="w-full text-white bg-gray-800 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
+                    <Link :href="route('employees.index')" class="w-full text-black bg-white border-2 hover:border-gray-800 border  focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Annuler</Link>
                 </div>
             </form>
         </div>

@@ -18,9 +18,9 @@ class DriversController extends Controller
                 $drivers = Driver::where('first_name', 'LIKE', "%{$search}%")
                 ->orWhere('last_name', 'LIKE', "%{$search}%")
                 ->orWhere('vehicle_number', 'LIKE', "%{$search}%")
-                ->get();
+                ->paginate(10);
             }else{
-                $drivers = Driver::all();
+                $drivers = Driver::paginate(10);
             }
             $vehicles = Vehicle::select('id', 'bus_number')->get();
             return Inertia::render('Transport/Drivers/drivers', ['drivers' => $drivers, 'vehicles'=>$vehicles]);

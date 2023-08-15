@@ -26,7 +26,7 @@ class ProjectsController extends Controller
         // form validation
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:projects',
-            'details' => 'string',
+            'details' => 'string|nullable',
         ]);
         // creating data
         $item = new Project();
@@ -59,7 +59,7 @@ class ProjectsController extends Controller
         // form validation
         $validatedData = $request->validate([
             'name' => ['required','string', 'max:255',Rule::unique('projects')->ignore($id)],
-            'details' => 'string',
+            'details' => 'string|nullable',
         ]);
         $item = Project::find($id);
         $item->name = $validatedData['name'];

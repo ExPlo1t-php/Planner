@@ -9,7 +9,7 @@
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
     // Form items
-    import { Modal, FileInput } from 'flowbite-vue';
+    import { Modal, FileInput, Radio } from 'flowbite-vue';
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
@@ -19,7 +19,7 @@
     import SearchBar from '@/Components/Form/SearchBar.vue';
     // Others
     import { ref, watch } from 'vue'
-    import { Head, useForm, router, Link } from '@inertiajs/vue3';
+    import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
     const isShowModal = ref(false)
     function closeModal() {
         isShowModal.value = false
@@ -47,31 +47,128 @@
         });
     }
     // search
-    let search = ref('');
-        watch(search, value=>{
-    router.get(route('employees.index'), { search: value }, { preserveState: true});
-    })
+    let search = ref(null);
+    watch(search, value => {
+        router.visit(route('employees.index', { search: value, department: department.value||null, project: project.value||null }), { preserveState: true });
+    });
+
+    // filters
+    const option = ref('');
+    let department = ref(null);
+    let project = ref(null);
+    let team = ref(null);
+    let position = ref(null);
+    watch(department, value => {
+        router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
+    }), { preserveState: true });
+    });
+    watch(project, value => {
+        router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
+    }), { preserveState: true });
+    });
+    watch(team, value => {
+        router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
+    }), { preserveState: true });
+    });
+    watch(position, value => {
+        router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
+    , position: position.value||null}), { preserveState: true });
+    });
+    watch(form, (value) => {
+        const projectId = value.project_id;
+        // console.log(projectId)
+        router.visit(route('employees.index', {projectM: projectId }), { preserveState: true });
+    });
+    //  filter reset
+    const reset = () => {
+        form.project_id=null;
+        form.station_id=null;
+        form.team_id=null;
+    };
+    watch(() => form.department_id,
+    (value) =>{
+        reset()
+        // console.log(value);
+    }
+    )
+    const resetFilter = () => {
+        search.value = null;
+        department.value = null;
+        project.value = null;
+        team.value = null;
+        position.value = null;
+        router.visit(route('employees.index'), { preserveState: true });
+    };
+    
+    
 </script>
 
 <template>
     <AuthenticatedLayout>
         <Head title="Employees management"/>
         <div class="py-12 ">
-            <div class="max-w-fit mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-fit mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
-                <div class="flex justify-between items-center mb-4">
+                <div class="lg:flex sm:block md:block justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
-                        Ajouter un nouvel Employee
+                    <div class="flex">
+                        <select v-model="department" class="w-24 text-sm h-10 m-2">
+                            <option selected :value="null">All Departments</option>
+                            <option v-for="department in departments" :value="department.id" :key="department.id">{{ department.name }}</option>
+                        </select>
+                        <select v-model="project" class="w-24 text-sm h-10 m-2">
+                            <option selected :value="null">All Projects</option>
+                            <option v-for="project in projects" :value="project.id" :key="project.id">{{ project.name }}</option>
+                        </select>
+                        <select v-model="team" class="w-24 text-sm h-10 m-2">
+                            <option selected :value="null">All Teams</option>
+                            <option v-for="team in teamsF" :value="team.id" :key="team.id">{{ team.name }}</option>
+                        </select>
+                        <select v-model="position" class="w-24 text-sm h-10 m-2 m-2">
+                            <option selected :value="null">All Positions</option>
+                            <option v-for="position in positions" :value="position.id" :key="position.id">{{ position.name }}</option>
+                        </select>
+                        <button @click="resetFilter" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-1 m-2 rounded-lg shadow-md transition-colors duration-300">
+                            <span class="hidden sm:block md:block lg:block">
+                            Reset Filter
+                            </span>
+                            <span class="sm:hidden md:hidden lg:hidden">
+                                <svg fill="#fff" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                    viewBox="0 0 489.645 489.645" xml:space="preserve">
+                                <g>
+                                    <path d="M460.656,132.911c-58.7-122.1-212.2-166.5-331.8-104.1c-9.4,5.2-13.5,16.6-8.3,27c5.2,9.4,16.6,13.5,27,8.3
+                                        c99.9-52,227.4-14.9,276.7,86.3c65.4,134.3-19,236.7-87.4,274.6c-93.1,51.7-211.2,17.4-267.6-70.7l69.3,14.5
+                                        c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-122.8-25c-20.6-2-25,16.6-23.9,22.9l15.6,123.8
+                                        c1,10.4,9.4,17.7,19.8,17.7c12.8,0,20.8-12.5,19.8-23.9l-6-50.5c57.4,70.8,170.3,131.2,307.4,68.2
+                                        C414.856,432.511,548.256,314.811,460.656,132.911z"/>
+                                </g>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                        <span class="hidden sm:block md:block lg:block">
+                            Ajouter un nouvel Employee
+                        </span>
+                        <span class="sm:hidden md:hidden lg:hidden">
+                            <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <g id="add-user-left-7" transform="translate(-2 -2)">
+                                    <path id="secondary" fill="#2ca9bc" d="M17.29,13.19a6,6,0,0,1-8.58,0A5,5,0,0,0,5,18v1s2,2,8,2,8-2,8-2V18a5,5,0,0,0-3.71-4.81Z"/>
+                                    <path id="primary" d="M7,5H3M5,3V7" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <path id="primary-2" data-name="primary" d="M7.35,11A6,6,0,1,0,13,3a5.8,5.8,0,0,0-2,.35" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <path id="primary-3" data-name="primary" d="M17.29,13.19A5,5,0,0,1,21,18v1s-2,2-8,2-8-2-8-2V18a5,5,0,0,1,3.71-4.81" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </g>
+                            </svg>
+                        </span>
                     </button>
                 </div>  
                 <!-- Main modal -->
-                <Modal size="md" v-if="isShowModal" @close="closeModal">
+                <Modal size="2xl" v-if="isShowModal" @close="closeModal">
                     <template #header>
                         <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Ajouter un nouvel Employee</h3>
                     </template>
                     <template #body>
-                        <form @submit.prevent="submit">
+                        <form @submit.prevent="submit" class="px-16">
                         <div>
                             <InputLabel for="employee_number" value="Matricule de l'employé" />
 
@@ -116,35 +213,36 @@
                             />
 
                             <InputError class="mt-2" :message="form.errors.first_name" />
-                        </div>
+                        </div> 
                         <div>
                             <InputLabel for="department_id" value="Departement " />
-
+                            
                             <SelectInput
                                 id="department_id"
                                 class="mt-1 block w-full"
                                 v-model="form.department_id"
                                 required
                                 autofocus
-                            >
+                                >
                             <option selected disabled hidden value="">Choisir une Departement</option>
+                            <option value="">Aucun Departement</option>
                                 <template v-for="department in departments">
                                     <option :value="department.id">{{ department.name }}</option>
                                 </template>
                             </SelectInput>
-
+                            
                             <InputError class="mt-2" :message="form.errors.department_id" />
                         </div>
-                        <div>
+                        <div v-if="form.department_id == 2">
                             <InputLabel for="project_id" value="Projet " />
 
                             <SelectInput
                                 id="project_id"
                                 class="mt-1 block w-full"
                                 v-model="form.project_id"
-                                required
                                 autofocus
                             >
+                            <option value="">Aucun Projet</option>
                             <option selected disabled hidden value="">Choisir un Projet</option>
                                 <template v-for="project in projects">
                                     <option :value="project.id">{{ project.name }}</option>
@@ -154,7 +252,7 @@
                             <InputError class="mt-2" :message="form.errors.project_id" />
                         </div>
                         <div>
-                            <InputLabel for="position_id" value="Poste " />
+                            <InputLabel for="position_id" value="Position" />
 
                             <SelectInput
                                 id="position_id"
@@ -163,31 +261,36 @@
                                 required
                                 autofocus
                             >
-                            <option selected disabled hidden value="">Choisir un Poste</option>
-                                <template v-for="position in positions">
+                            <option selected disabled hidden value="">Choisir un Position</option>
+                            <template v-if="form.department_id">
+                                <template v-for="position in getPositions(positions, getDepartmentPositions(departments, getNameById(departments, form.department_id)))">
                                     <option :value="position.id">{{ position.name }}</option>
                                 </template>
+                            </template>
+                            <template v-else>
+                                <option value="" disabled>Aucun Position (veuillez choisir une departement)</option>
+                            </template>
+                            
                             </SelectInput>
 
                             <InputError class="mt-2" :message="form.errors.position_id" />
                         </div>
-                        <div>
-                            <InputLabel for="station_id" value="Station " />
-
+                        <div v-if="form.department_id == 2 || form.department_id == 1">
+                            <InputLabel for="station_id" value="Workstation " />
+                            
                             <SelectInput
-                                id="station_id"
-                                class="mt-1 block w-full"
-                                v-model="form.station_id"
-                                required
-                                autofocus
+                            id="station_id"
+                            class="mt-1 block w-full"
+                            v-model="form.station_id"
+                            autofocus
                             >
-                            <option selected disabled hidden value="">Choisir un Station</option>
-                                <template v-for="station in stations">
-                                    <option :value="station.id">{{ station.name }}</option>
-                                </template>
-                            </SelectInput>
-
-                            <InputError class="mt-2" :message="form.errors.station_id" />
+                            <option selected disabled hidden value="">Choisir un Workstation</option>
+                            <template v-for="station in stationsFM">
+                                <option :value="station.id">{{ station.name }}</option>
+                            </template>
+                        </SelectInput>
+                        
+                        <InputError class="mt-2" :message="form.errors.station_id" />
                         </div>
                         <div>
                             <InputLabel for="team_leader_manager_id" value="Team Leader/Manager" />
@@ -212,21 +315,22 @@
 
                             <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                         </div>
-                        <div>
+                        <div v-if="form.department_id == 2 || form.department_id == 1">
                             <InputLabel for="team_id" value="Team" />
-
+                            
                             <SelectInput
-                                id="team_id"
-                                class="mt-1 block w-full"
-                                v-model="form.team_id"
-                                autofocus
+                            id="team_id"
+                            class="mt-1 block w-full"
+                            v-model="form.team_id"
+                            autofocus
                             >
-                            <option selected disabled hidden value="">Choisir un Team</option>
-                                <template v-for="team in teams">
+                                <option selected disabled hidden value="">Choisir un Team</option>
+                                <option value="">Aucun Team</option>
+                                <template v-for="team in teamsFM">
                                     <option :value="team.id">{{ team.name }}</option>
                                 </template>
                             </SelectInput>
-
+                    
                             <InputError class="mt-2" :message="form.errors.team_id" />
                         </div>
                         <div>
@@ -239,6 +343,7 @@
                                 autofocus
                             >
                             <option selected disabled hidden value="">Choisir un Parada</option>
+                            <option value="">Aucun Parada</option>
                                 <template v-for="terminal in terminals">
                                     <option :value="terminal.id">{{ terminal.name }}</option>
                                 </template>
@@ -255,14 +360,11 @@
                                 v-model="form.photo"
                                 autofocus
                             >
-                                <p class="!mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                    SVG, PNG, JPG or GIF (MAX. 800x400px)
-                                </p>
                             </FileInput>
 
                             <InputError class="mt-2" :message="form.errors.photo" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
@@ -270,47 +372,52 @@
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
                         <TableHeadItem>Photo de l'employé</TableHeadItem>
-                        <TableHeadItem>Matricule de l'employé</TableHeadItem>
-                        <TableHeadItem>Prénom de l'employé</TableHeadItem>
-                        <TableHeadItem>Nom de l'employé</TableHeadItem>
-                        <TableHeadItem>Departement</TableHeadItem>
-                        <TableHeadItem>Projet</TableHeadItem>
-                        <TableHeadItem>Poste</TableHeadItem>
-                        <TableHeadItem>Station</TableHeadItem>
-                        <TableHeadItem>Team Leader/Manager</TableHeadItem>
-                        <TableHeadItem>Team</TableHeadItem>
-                        <TableHeadItem>Terminal</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'employee_number')">Matricule de l'employé</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'first_name')">Prénom de l'employé</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'last_name')">Nom de l'employé</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'department_id')">Departement</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'project_id')">Projet</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'position_id')">Position</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'station_id')">Workstation</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'team_leader_manager_id')">Team Leader/Manager</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'team')">Team</TableHeadItem>
+                        <TableHeadItem @click="sortTable(employees.data, 'terminal_id')">Parada</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="employees && employees.length > 0">
-                        <TableRow v-for="employee in employees" :key="employee.id">
+                        <template v-if="employees.data && employees.data.length > 0">
+                        <TableRow v-for="employee in sortedItems" :key="employee.id">
                             <TableRowItem class="px-6 py-4 w-5 h-5">
                                 <img :src="employee.photo" alt="">
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ employee.employee_number }}</div>
+                                <div class="text-gray-600">{{ employee.employee_number }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ employee.first_name }}</div>
+                                <div class="text-gray-600">{{ employee.first_name }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ employee.last_name }}</div>
+                                <div class="text-gray-600">{{ employee.last_name }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(departments, employee.department_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(departments, employee.department_id) }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(projects, employee.project_id ) }}</div>
+                                <div class="text-gray-600">{{ getNameById(projects, employee.project_id ) }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(positions, employee.position_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(positions, employee.position_id) }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(stations, employee.station_id) }}</div>
+                                <template v-if="employee.station_id">
+                                    <div class="text-gray-600">{{ getNameById(stations, employee.station_id) }}</div>
+                                </template>
+                                <template v-else>
+                                    <div class="text-red-400">Pas de workstation</div>
+                                </template>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
                                 <template v-if="employee.team_leader_manager_id">
-                                    <div class="text-gray-400">{{ getNameById(leaders, employee.team_leader_manager_id) }}</div>
+                                    <div class="text-gray-600">{{ getNameById(leaders, employee.team_leader_manager_id) }}</div>
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas de Team Leader/Manager</div>
@@ -318,14 +425,19 @@
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
                                 <template v-if="employee.team_id">
-                                    <div class="text-gray-400">{{ getNameById(teams, employee.team_id) }}</div>
+                                    <div class="text-gray-600">{{ getNameById(teams, employee.team_id) }}</div>
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas d'équipe</div>
                                 </template>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(terminals, employee.terminal_id) }}</div>
+                                <template v-if="employee.terminal_id">
+                                    <div class="text-gray-600">{{ getNameById(terminals, employee.terminal_id) }}</div>
+                                </template>
+                                <template v-else>
+                                    <div class="text-red-400">Pas de terminal</div>
+                                </template>
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -353,7 +465,7 @@
 export default {
     props: {
         employees: {
-            type: Array,
+            type: Object,
         },
         leaders: {
             type: Array,
@@ -376,6 +488,16 @@ export default {
         terminals: {
             type: Array,
         },
+        // filtered stations
+        teamsF: {
+            type: Array,
+        },
+        stationsFM: {
+            type: Array,
+        },
+        teamsFM: {
+            type: Array,
+        },
     },
     data(){
         return{
@@ -391,20 +513,66 @@ export default {
                 team_leader_manager_id: '',
                 team_id: '',
                 terminal_id: '',
-            }
+            },
+            sortKey: '',
+            sortDirection: 'asc',
         }
     },
     methods: {
         getNameById(object, id) {
-            const foundObject = object.find(obj => obj.id === id);
-            if (foundObject.name){
-                return foundObject ? foundObject.name : null;
-            }else{
-                return foundObject ? foundObject.first_name : null;
+            if(id!== null){
+                const foundObject = object.find(obj => obj.id == id);
+                // console.log(foundObject)
+                if (foundObject.name){
+                    return foundObject ? foundObject.name : null;
+                }else{
+                    return foundObject ? foundObject.first_name : null;
+                }
             }
         },
-    },
+        getDepartmentPositions(departments, name){
+            // this  method fetches the  positions  available   in  the selected department 
+            const department = departments.find(department => department.name === name);
+            return JSON.parse(department.positions)
+        },
+        getPositions(positions, departmentPos){
+            // this  method takes an array of department positions from "getDepartmentPositions"
+            // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
+            const filteredData = positions.filter(object =>
+            departmentPos.includes(object.name)
+            );
+            return filteredData
+        },
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
 
-    components: { DeleteLink, Link }
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+        },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.employees.data);
+        },
+        },
+    components: { DeleteLink, Link },
 };
 </script>

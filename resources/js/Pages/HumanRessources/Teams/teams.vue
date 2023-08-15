@@ -52,7 +52,7 @@
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Team
                     </button>
                 </div>  
@@ -89,10 +89,10 @@
                                 autofocus
                             >
                             <option selected disabled hidden value="">Choisir un shift</option>
-                            <option value="Shift Administrative">Shift Administrative</option>
-                            <option value="Shift 1">Shift Matin (07h-15h)</option>
-                            <option value="Shift 2">Shift Soir (15h-23h)</option>
-                            <option value="Shift 3">Shift Nuit (23h-7h)</option>
+                            <option value="Shift Administrative">Shift Administrative (8h-18h)</option>
+                            <option value="Shift Matin (07h-15h)">Shift Matin (07h-15h)</option>
+                            <option value="Shift Soir (15h-23h)">Shift Soir (15h-23h)</option>
+                            <option value="Shift Nuit (23h-7h)">Shift Nuit (23h-7h)</option>
                             </SelectInput>
 
                             <InputError class="mt-2" :message="form.errors.trajet" />
@@ -116,20 +116,20 @@
                             
                             <InputError class="mt-2" :message="form.errors.project_id" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Nom de Team</TableHeadItem>
-                        <TableHeadItem>Shift de Team</TableHeadItem>
-                        <TableHeadItem>Projet de Team</TableHeadItem>
+                        <TableHeadItem @click="sortTable(teams, 'name')">Nom de Team</TableHeadItem>
+                        <TableHeadItem @click="sortTable(teams, 'shift')">Shift de Team</TableHeadItem>
+                        <TableHeadItem  @click="sortTable(teams, 'project_id')">Projet de Team</TableHeadItem>
                     </TableHead>
                     <TableBody>
                         <template v-if="teams && teams.length > 0">
-                        <TableRow v-for="team in teams" :key="team.id">
+                        <TableRow v-for="team in sortedItems" :key="team.id">
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ team.name }}</div>
                             </TableRowItem>
@@ -177,10 +177,41 @@ export default {
                 name: '',
                 shift: '',
                 project_id: '',
-            }
+            },
+            sortKey: '',
+            sortDirection: 'asc',
         }
     },
     methods:{
+        // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+    },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.teams);
+        },
     },
     components: { DeleteLink, Link }
 };

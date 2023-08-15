@@ -72,10 +72,10 @@
                             autofocus
                         >
                             <option selected disabled hidden value="">Choisir un trajet</option>
-                            <option value="Shift Administrative">Shift Administrative</option>
-                            <option value="Shift 1">Shift 1</option>
-                            <option value="Shift 2">Shift 2</option>
-                            <option value="Shift 3">Shift 3</option>
+                            <option value="Shift Administrative">Shift Administrative (8h-18h)</option>
+                            <option value="Shift Matin (07h-15h)">Shift Matin (07h-15h)</option>
+                            <option value="Shift Soir (15h-23h)">Shift Soir (15h-23h)</option>
+                            <option value="Shift Nuit (23h-7h)">Shift Nuit (23h-7h)</option>
                         </SelectInput>
 
                     <InputError class="mt-2" :message="form.errors.trajet" />
@@ -99,8 +99,8 @@
                     <InputError class="mt-2" :message="form.errors.vehicle_number" />
                 </div>
                 <div class="flex ">
-                    <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
-                    <Link :href="route('terminals.index')" class="w-full text-black bg-white border-2 hover:border-indigo-500 border  focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Cancel</Link>
+                    <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
+                    <Link :href="route('terminals.index')" class="w-full text-black bg-white border-2 hover:border-gray-500 border  focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Cancel</Link>
                 </div>
             </form>
         </div>

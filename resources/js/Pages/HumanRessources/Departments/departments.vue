@@ -14,7 +14,6 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     import TextArea from '@/Components/Form/TextArea.vue';
-    import SelectInput from '@/Components/Form/SelectInput.vue';
     import SearchBar from '@/Components/Form/SearchBar.vue';
     // Others
     import { ref, watch } from 'vue'
@@ -30,10 +29,11 @@
     const form = useForm({
         name: '',
         info: '',
+        positions: [],
     })
     const submit = () => {
         form.post(route('departments.create'), {
-            onSuccess: () => {form.reset('name', 'info')},
+            onSuccess: () => {form.reset('name', 'info', 'positions')},
         });
     }
     // search
@@ -51,7 +51,7 @@
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-600 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Department
                     </button>
                 </div>  
@@ -78,6 +78,23 @@
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
                         <div>
+                            <InputLabel value="positions" />
+                            <div class="grid grid-cols-5">
+                                <template v-for="position in positions" >
+                                    <div>
+                                        <input
+                                         type="checkbox"
+                                         :id="'position-' + position.name"
+                                         v-model="form.positions"
+                                         class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-gray-600 m-2"
+                                         :value="position.name"
+                                         >
+                                        {{ position.name }}
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <div>
                             <InputLabel for="info" value="Info de Department" />
 
                             <TextArea
@@ -90,24 +107,28 @@
                             />
                             <InputError class="mt-2" :message="form.errors.info" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-600 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem>Nom de Department</TableHeadItem>
-                        <TableHeadItem>Info de Department</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments, 'name')">Nom de Department</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments, 'info')">Info de Department</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments, 'positions')">Positions</TableHeadItem>
                     </TableHead>
                     <TableBody>
                         <template v-if="departments && departments.length > 0">
-                        <TableRow v-for="department in departments" :key="department.id">
+                        <TableRow v-for="department in sortedItems" :key="department.id">
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ department.name }}</div>
                             </TableRowItem>
                             <TableRowItem class="px-6 py-4">
                                 <div class="text-gray-400">{{ department.info }}</div>
+                            </TableRowItem>
+                            <TableRowItem class="px-6 py-4">
+                                <div class="text-gray-400">{{  parseAndJoinPositions(department.positions) }}</div>
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -137,16 +158,59 @@ export default {
         departments: {
             type: Array,
         },
+        positions: {
+            type: Array,
+        },
     },
     data(){
         return{
             form: {
                 name: '',
                 info: '',
-            }
+                positions: [],
+            },
+            sortKey: '',
+            sortDirection: 'asc',
         }
     },
     methods:{
+        parseAndJoinPositions(positionsString) {
+            try {
+                const positionsArray = JSON.parse(positionsString);
+                return positionsArray.join(', ');
+            } catch (error) {
+                console.error('Error parsing positions:', error);
+            }
+        },
+                // table sort
+        sortTable(collection, key) {
+            if (this.sortKey === key) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortDirection = 'asc';
+            }
+            this.sortedItems = this.getSortedItems(collection);
+        },
+        getSortedItems(collection) {
+            const sortedItems = collection.slice().sort((a, b) => {
+            const aValue = this.getSortValue(a, this.sortKey);
+            const bValue = this.getSortValue(b, this.sortKey);
+
+            if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+            });
+            return sortedItems;
+        },
+        getSortValue(obj, key) {
+            return obj[key];
+        },
+    },
+    computed: {
+        sortedItems() {
+            return this.getSortedItems(this.departments);
+        },
     },
     components: { DeleteLink, Link }
 };
