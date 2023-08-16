@@ -19,9 +19,9 @@ class TerminalsController extends Controller
             ->orWhere('address', 'LIKE', "%{$search}%")
             ->orWhere('trajet', 'LIKE', "%{$search}%")
             ->orWhere('vehicle_number', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $terminals = Terminal::all();
+            $terminals = Terminal::paginate(10);
         }
         $vehicles = Vehicle::select('id', 'bus_number')->get();
         return Inertia::render('Transport/Terminals/terminals', ['terminals' => $terminals, 'vehicles'=>$vehicles]);
@@ -65,7 +65,7 @@ public function update(Request $request, $id){
         'name' => 'required|string|max:255',
         'address' => 'required|string|max:255',
         'trajet' => 'required|string|max:255',
-        'vehicle_number' => ['required','string','max:20'],
+        'vehicle_number' => ['required','integer','max:20'],
     ]);
     $terminal = Terminal::find($id);
     $terminal->name = $validatedData['name'];

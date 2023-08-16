@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal } from 'flowbite-vue'
     import InputError from '@/Components/InputError.vue';
@@ -46,11 +47,11 @@
     <AuthenticatedLayout>
         <Head title="Stations management"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Station
                     </button>
                 </div>  
@@ -95,24 +96,24 @@
                             
                             <InputError class="mt-2" :message="form.errors.project_id" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem @click="sortTable(stations, 'name')">Nom de Station</TableHeadItem>
-                        <TableHeadItem @click="sortTable(stations, 'project_id')">Projet</TableHeadItem>
+                        <TableHeadItem @click="sortTable(stations.data, 'name')">Nom de Station</TableHeadItem>
+                        <TableHeadItem @click="sortTable(stations.data, 'project_id')">Projet</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="stations && stations.length > 0">
+                        <template v-if="stations.data && stations.data.length > 0">
                         <TableRow v-for="station in sortedItems" :key="station.id">
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ station.name }}</div>
+                            <TableRowItem>
+                                {{ station.name }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ getNameById(projects, station.project_id) }}</div>
+                            <TableRowItem>
+                                {{ getNameById(projects, station.project_id) }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -131,6 +132,8 @@
                     </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="stations.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -140,7 +143,7 @@
 export default {
     props: {
         stations: {
-            type: Array,
+            type: Object,
         },
         projects: {
             type: Array,
@@ -156,7 +159,7 @@ export default {
             sortDirection: 'asc',
         }
     },
-    components: { DeleteLink, Link },
+    components: { DeleteLink, Link, Pagination },
     methods: {
         getNameById(object, id) {
             if(id!== null){
@@ -195,7 +198,7 @@ export default {
         },
         computed: {
         sortedItems() {
-            return this.getSortedItems(this.stations);
+            return this.getSortedItems(this.stations.data);
         },
         }
 };

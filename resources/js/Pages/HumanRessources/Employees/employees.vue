@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal, FileInput, Radio } from 'flowbite-vue';
     import InputError from '@/Components/InputError.vue';
@@ -19,7 +20,7 @@
     import SearchBar from '@/Components/Form/SearchBar.vue';
     // Others
     import { ref, watch } from 'vue'
-    import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
+    import { Head, useForm, router, Link } from '@inertiajs/vue3';
     const isShowModal = ref(false)
     function closeModal() {
         isShowModal.value = false
@@ -74,10 +75,12 @@
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
     , position: position.value||null}), { preserveState: true });
     });
-    watch(form, (value) => {
-        const projectId = value.project_id;
+    watch(() => form.project_id, (value)=>{
+        const projectId = value;
         // console.log(projectId)
-        router.visit(route('employees.index', {projectM: projectId }), { preserveState: true });
+        if(projectId){
+            router.visit(route('employees.index', {projectM: projectId }), { preserveState: true });
+        }
     });
     //  filter reset
     const reset = () => {
@@ -88,7 +91,6 @@
     watch(() => form.department_id,
     (value) =>{
         reset()
-        // console.log(value);
     }
     )
     const resetFilter = () => {
@@ -364,7 +366,7 @@
 
                             <InputError class="mt-2" :message="form.errors.photo" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
@@ -389,51 +391,51 @@
                             <TableRowItem class="px-6 py-4 w-5 h-5">
                                 <img :src="employee.photo" alt="">
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ employee.employee_number }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ employee.first_name }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ employee.last_name }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ getNameById(departments, employee.department_id) }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ getNameById(projects, employee.project_id ) }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <div class="text-gray-600">{{ getNameById(positions, employee.position_id) }}</div>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <template v-if="employee.station_id">
-                                    <div class="text-gray-600">{{ getNameById(stations, employee.station_id) }}</div>
+                                    {{ getNameById(stations, employee.station_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas de workstation</div>
                                 </template>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <template v-if="employee.team_leader_manager_id">
-                                    <div class="text-gray-600">{{ getNameById(leaders, employee.team_leader_manager_id) }}</div>
+                                    {{ getNameById(leaders, employee.team_leader_manager_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas de Team Leader/Manager</div>
                                 </template>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <template v-if="employee.team_id">
-                                    <div class="text-gray-600">{{ getNameById(teams, employee.team_id) }}</div>
+                                    {{ getNameById(teams, employee.team_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas d'équipe</div>
                                 </template>
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
+                            <TableRowItem>
                                 <template v-if="employee.terminal_id">
-                                    <div class="text-gray-600">{{ getNameById(terminals, employee.terminal_id) }}</div>
+                                    {{ getNameById(terminals, employee.terminal_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">Pas de terminal</div>
@@ -456,6 +458,8 @@
                     </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="employees.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -502,7 +506,7 @@ export default {
     data(){
         return{
             form: {
-                photo: '',
+                photo: null,
                 employee_number: '',
                 first_name: '',
                 last_name: '',
@@ -510,7 +514,7 @@ export default {
                 project_id: '',
                 position_id: '',
                 station_id: '',
-                team_leader_manager_id: '',
+                team_leader_manager_id: null,
                 team_id: '',
                 terminal_id: '',
             },
@@ -567,12 +571,12 @@ export default {
         getSortValue(obj, key) {
             return obj[key];
         },
-        },
+    },
     computed: {
         sortedItems() {
             return this.getSortedItems(this.employees.data);
         },
-        },
-    components: { DeleteLink, Link },
+    },
+    components: { DeleteLink, Link, Pagination },
 };
 </script>

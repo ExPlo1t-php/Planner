@@ -22,9 +22,9 @@ class VehiclesController extends Controller
                 $vehicles = Vehicle::where('registration_number', 'LIKE', "%{$search}%")
                 ->orWhere('entree_date', 'LIKE', "%{$search}%")
                 ->orWhere('bus_number', 'LIKE', "%{$search}%")
-                ->get();
+                ->paginate(10);
             }else{
-                $vehicles = Vehicle::all();
+                $vehicles = Vehicle::paginate(10);
             }
             return Inertia::render('Transport/Vehicles/vehicles', ['vehicles' => $vehicles, 'filter'=>$search]);
         }

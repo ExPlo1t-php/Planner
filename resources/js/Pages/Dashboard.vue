@@ -1,24 +1,18 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Module from '@/Components/Module.vue'
-import { Head, Link } from '@inertiajs/vue3';
-import Sidebar from '@/Components/Sidebar.vue';
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
-
+import { Head, Link, usePage} from '@inertiajs/vue3';
+import { computed } from 'vue'
 </script>
 
 <template>
     <Head title="Dashboard" />
 
-    <AuthenticatedLayout>
-    <!-- <button @click="toggleSidebar">Toggle Sidebar</button> -->
-    <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
-        <Module link="vehicles.index">
-                    Gestion des Vehicules 
-                </Module>
-    </Sidebar>
-
+    <AuthenticatedLayout :auth="auth">
     <div class="my-6 max-w-7xl m-auto">
+        <div v-if="$page.props.flash.message" class="bg-red-100 border border-red-400 text-red-700 w-1/2 self-center px-4 py-3 m-auto rounded relative" role="alert">
+            <strong class="font-bold">{{ $page.props.flash.message }}!</strong>
+        </div>
         <section class="bg-white dark:bg-gray-900">
             <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Transport</h2>
             <div class="grid lg:grid-cols-4 md:grid-cols-3">
@@ -64,21 +58,8 @@ import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'fl
 </template>
     <script>
 export default {
-  components: {
-    Sidebar,
-  },
-  data() {
-    return {
-      isSidebarCollapsed: true,
-    };
-  },
-  methods: {
-    toggleSidebar() {
-      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    props:{
+        auth: Object,
     },
-    toggleSidebarState(isCollapsed) {
-      this.isSidebarCollapsed = isCollapsed;
-    },
-  },
 };
 </script>

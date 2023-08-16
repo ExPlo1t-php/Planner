@@ -6,11 +6,14 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Sidebar from '@/Components/Sidebar.vue';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
+
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">
@@ -73,6 +76,22 @@ const showingNavigationDropdown = ref(false);
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
+                                <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
+                                        <Accordion v-if="auth.user.role == 'administrator' || auth.user.role == 'pp' ">
+                                            <accordion-panel>
+                                                <accordion-header >Human Ressources</accordion-header>
+                                                <accordion-content>
+                                                    <Link class="p-0" :href="route('users.index')">
+                                                        <div class="max-w-xs p-3 text-center bg-gray-800 hover:bg-gray-600 dark:bg-gray-800 cursor-pointer">
+                                                        <h6 class=" text-lg font-semibold tracking-tight text-white">
+                                                            Gestion Des Utilisateurs
+                                                        </h6>
+                                                        </div>
+                                                    </Link>
+                                                </accordion-content>
+                                            </accordion-panel>
+                                        </Accordion>
+                                </Sidebar>
                             </div>
                         </div>
 
@@ -153,3 +172,27 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+<script>
+export default {
+    props:{
+        auth: Object,
+    },
+    components: {
+        Sidebar,
+    },
+    
+    data() {
+        return {
+        isSidebarCollapsed: true,
+        };
+    },
+    methods: {
+        toggleSidebar() {
+        this.isSidebarCollapsed = !this.isSidebarCollapsed;
+        },
+        toggleSidebarState(isCollapsed) {
+        this.isSidebarCollapsed = isCollapsed;
+        },
+    },
+    };
+</script>

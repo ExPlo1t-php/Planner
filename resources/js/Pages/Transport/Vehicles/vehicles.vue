@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal } from 'flowbite-vue'
     import InputError from '@/Components/InputError.vue';
@@ -48,11 +49,11 @@
     <AuthenticatedLayout>
         <Head title="Gestion Des Vehicules"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between justify-end items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter une nouvelle Vehicule
                     </button>
                 </div>  
@@ -109,21 +110,21 @@
                         </div>
 
                         
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of vehicles in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem @click="sortTable(vehicles, 'bus_number')">Numero de transport</TableHeadItem>
-                        <TableHeadItem @click="sortTable(vehicles, 'registration_number')">Matricule</TableHeadItem>
-                        <TableHeadItem @click="sortTable(vehicles, 'entree_date')">Date d'entree</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles.data, 'bus_number')">Numero de transport</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles.data, 'registration_number')">Matricule</TableHeadItem>
+                        <TableHeadItem @click="sortTable(vehicles.data, 'entree_date')">Date d'entree</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="vehicles && vehicles.length > 0">
+                        <template v-if="vehicles.data && vehicles.data.length > 0">
                             <TableRow v-for="vehicle in sortedItems" :key="vehicle.id">
-                                <TableRowItem class="px-6 py-4">
+                                <TableRowItem>
                                     <div class="text-black">{{ vehicle.bus_number }}</div>
                                 </TableRowItem>
                                 <TableRowItem>
@@ -149,6 +150,8 @@
                         </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="vehicles.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -158,7 +161,7 @@
 export default {
     props: {
         vehicles: {
-            type: Array,
+            type: Object,
         },
     },
     data(){
@@ -195,9 +198,9 @@ export default {
         },
     computed: {
         sortedItems() {
-            return this.getSortedItems(this.vehicles);
+            return this.getSortedItems(this.vehicles.data);
         },
     },
-    components: { DeleteLink, EditLink, SearchBar }
+    components: { DeleteLink, EditLink, Pagination }
 };
 </script>

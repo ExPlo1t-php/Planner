@@ -1,6 +1,6 @@
 <!-- Table body item -->
 <template>
-    <td class="px-6 py-4">
+    <td class="px-6 py-4 text-gray-800">
             <slot/>
     </td>
 </template>

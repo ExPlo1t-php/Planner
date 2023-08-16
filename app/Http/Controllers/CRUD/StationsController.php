@@ -16,9 +16,9 @@ class StationsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Station::where('name', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $items = Station::all();
+            $items = Station::paginate(10);
         }
         $projects = Project::all();
             return Inertia::render('HumanRessources/Stations/stations', ['stations' => $items, 'projects'=>$projects]);

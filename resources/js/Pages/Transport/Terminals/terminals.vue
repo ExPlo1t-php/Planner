@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal } from 'flowbite-vue'
     import InputError from '@/Components/InputError.vue';
@@ -46,14 +47,14 @@
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedLayout :auth="auth">
         <Head title="Paradas management"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Parada
                     </button>
                 </div>  
@@ -132,32 +133,32 @@
                             <InputError class="mt-2" :message="form.errors.vehicle_number" />
                         </div>
                         
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem @click="sortTable(terminals, 'name')">Nom de Parada</TableHeadItem>
-                        <TableHeadItem @click="sortTable(terminals, 'address')">Adresse</TableHeadItem>
-                        <TableHeadItem @click="sortTable(terminals, 'trajet')">Trajet</TableHeadItem>
-                        <TableHeadItem @click="sortTable(terminals, 'vehicle_number')">Numéro de véhicule</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals.data, 'name')">Nom de Parada</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals.data, 'address')">Adresse</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals.data, 'trajet')">Trajet</TableHeadItem>
+                        <TableHeadItem @click="sortTable(terminals.data, 'vehicle_number')">Numéro de véhicule</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="terminals && terminals.length > 0">
+                        <template v-if="terminals.data && terminals.data.length > 0">
                         <TableRow v-for="terminal in sortedItems" :key="terminal.id">
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ terminal.name }}</div>
+                            <TableRowItem>
+                                {{ terminal.name }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ terminal.address }}</div>
+                            <TableRowItem>
+                                {{ terminal.address }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ terminal.trajet }}</div>
+                            <TableRowItem>
+                                {{ terminal.trajet }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ terminal.vehicle_number }}</div>
+                            <TableRowItem>
+                                {{ terminal.vehicle_number }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -176,6 +177,8 @@
                     </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="terminals.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -185,11 +188,12 @@
 export default {
     props: {
         terminals: {
-            type: Array,
+            type: Object,
         },
         vehicles: {
             type: Array,
         },
+        auth: Object,
     },
     data(){
         return{
@@ -230,9 +234,9 @@ export default {
         },
     computed: {
         sortedItems() {
-            return this.getSortedItems(this.terminals);
+            return this.getSortedItems(this.terminals.data);
         },
     },
-    components: { DeleteLink }
+    components: { DeleteLink, Pagination }
 };
 </script>

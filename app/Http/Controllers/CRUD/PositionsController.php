@@ -15,9 +15,9 @@ class PositionsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Position::where('name', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $items = Position::all();
+            $items = Position::paginate(10);
         }
             return Inertia::render('HumanRessources/Positions/positions', ['positions' => $items]);
     }

@@ -17,9 +17,9 @@ class TeamsController extends Controller
         if($search){
             $items = Team::where('name', 'LIKE', "%{$search}%")
             ->orWhere('shift', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $items = Team::all();
+            $items = Team::paginate(10);
         }
         $projects = Project::all();
             return Inertia::render('HumanRessources/Teams/teams', 

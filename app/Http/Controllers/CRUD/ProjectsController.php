@@ -15,9 +15,9 @@ class ProjectsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Project::where('name', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $items = Project::all();
+            $items = Project::paginate(10);
         }
             return Inertia::render('HumanRessources/Projects/projects', ['projects' => $items]);
     }

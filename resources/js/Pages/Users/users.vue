@@ -50,11 +50,11 @@
     <AuthenticatedLayout>
         <Head title="User management"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between justify-end items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel utilisateur
                     </button>
                 </div>  
@@ -90,10 +90,10 @@
                                 required
                                 autofocus
                             >
-                                <option value="administrator">Administrateur</option>
-                                <option value="assembly_editor">Éditeur d'assemblage</option>
-                                <option value="injection_editor">Éditeur d'injection </option>
-                                <option value="administration_editor">Éditeur d'administration </option>
+                            <option value="administrator">Administrateur</option>
+                            <option value="assembly">Éditeur d'assemblage</option>
+                            <option value="injection">Éditeur d'injection </option>
+                            <option value="HR">Ressources Humaines </option>
                             </SelectInput>
 
                             <InputError class="mt-2" :message="form.errors.name" />
@@ -143,7 +143,7 @@
                             <InputError class="mt-2" :message="form.errors.password_confirmation" />
                         </div>
                         
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>

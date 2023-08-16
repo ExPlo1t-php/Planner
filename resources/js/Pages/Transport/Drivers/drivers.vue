@@ -48,11 +48,11 @@
     <AuthenticatedLayout>
         <Head title="Driver management"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel chauffeur
                     </button>
                 </div>  
@@ -111,7 +111,7 @@
                             <InputError class="mt-2" :message="form.errors.vehicle_number" />
                         </div>
                         
-                        <button type="submit" class="w-full text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                         <Link :href="route('vehicles.index')" class="hover:text-gray-500 text-sm m-4 ">Ajouter une nouvelle vehicule</Link>
                     </form>
                     </template>
@@ -126,14 +126,14 @@
                     <TableBody>
                         <template v-if="drivers.data && drivers.data.length > 0">
                         <TableRow v-for="driver in sortedItems" :key="driver.id">
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ driver.first_name }}</div>
+                            <TableRowItem>
+                                {{ driver.first_name }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ driver.last_name }}</div>
+                            <TableRowItem>
+                                {{ driver.last_name }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ driver.vehicle_number }}</div>
+                            <TableRowItem>
+                                {{ driver.vehicle_number }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">

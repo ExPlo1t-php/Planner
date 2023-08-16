@@ -18,9 +18,9 @@ class DepartmentsController extends Controller
         if($search){
             $items = Department::where('name', 'LIKE', "%{$search}%")
             ->orWhere('info', 'Like', "%{$search}%")
-            ->get();
+            ->paginate(10);
         }else{
-            $items = Department::all();
+            $items = Department::paginate(10);
         }
             return Inertia::render('HumanRessources/Departments/departments', ['departments' => $items, 'positions'=>$positions]);
     }

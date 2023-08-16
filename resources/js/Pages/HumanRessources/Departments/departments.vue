@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal } from 'flowbite-vue'
     import InputError from '@/Components/InputError.vue';
@@ -47,11 +48,11 @@
     <AuthenticatedLayout>
         <Head title="Departments management"/>
         <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-scroll">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
                     <SearchBar v-model="search"/>
-                    <button  @click="showModal" class="bg-gray-600 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Department
                     </button>
                 </div>  
@@ -107,28 +108,28 @@
                             />
                             <InputError class="mt-2" :message="form.errors.info" />
                         </div>
-                        <button type="submit" class="w-full text-white bg-gray-600 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
+                        <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Ajouter</button>
                     </form>
                     </template>
                 </Modal>
                 <!-- showing a list of drivers in a table ------------------------------------>
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
-                        <TableHeadItem @click="sortTable(departments, 'name')">Nom de Department</TableHeadItem>
-                        <TableHeadItem @click="sortTable(departments, 'info')">Info de Department</TableHeadItem>
-                        <TableHeadItem @click="sortTable(departments, 'positions')">Positions</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments.data, 'name')">Nom de Department</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments.data, 'info')">Info de Department</TableHeadItem>
+                        <TableHeadItem @click="sortTable(departments.data, 'positions')">Positions</TableHeadItem>
                     </TableHead>
                     <TableBody>
-                        <template v-if="departments && departments.length > 0">
+                        <template v-if="departments.data && departments.data.length > 0">
                         <TableRow v-for="department in sortedItems" :key="department.id">
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ department.name }}</div>
+                            <TableRowItem>
+                                {{ department.name }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{ department.info }}</div>
+                            <TableRowItem>
+                                {{ department.info }}
                             </TableRowItem>
-                            <TableRowItem class="px-6 py-4">
-                                <div class="text-gray-400">{{  parseAndJoinPositions(department.positions) }}</div>
+                            <TableRowItem>
+                                {{  parseAndJoinPositions(department.positions) }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -147,6 +148,8 @@
                     </template>
                     </TableBody>
                 </table>
+                <!-- pagination -->
+                <Pagination :links="departments.links"/>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -156,7 +159,7 @@
 export default {
     props: {
         departments: {
-            type: Array,
+            type: Object,
         },
         positions: {
             type: Array,
@@ -209,9 +212,9 @@ export default {
     },
     computed: {
         sortedItems() {
-            return this.getSortedItems(this.departments);
+            return this.getSortedItems(this.departments.data);
         },
     },
-    components: { DeleteLink, Link }
+    components: { DeleteLink, Link, Pagination }
 };
 </script>
