@@ -10,6 +10,7 @@ import Sidebar from '@/Components/Sidebar.vue';
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 
 const showingNavigationDropdown = ref(false);
+console.warn("The {auth: Object} prop should be defined in every page where authenticated layout is used, otherwise the sidebar won't work")
 </script>
 
 <template>
