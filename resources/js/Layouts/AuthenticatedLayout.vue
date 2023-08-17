@@ -10,7 +10,6 @@ import Sidebar from '@/Components/Sidebar.vue';
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 
 const showingNavigationDropdown = ref(false);
-console.warn("The {auth: Object} prop should be defined in every page where authenticated layout is used, otherwise the sidebar won't work")
 </script>
 
 <template>
@@ -36,9 +35,6 @@ console.warn("The {auth: Object} prop should be defined in every page where auth
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <!-- <NavLink :href="route('users.index')" :active="route().current('users')">
-                                    DUDES
-                                </NavLink> -->
                             </div>
                         </div>
 
@@ -78,9 +74,9 @@ console.warn("The {auth: Object} prop should be defined in every page where auth
                                     </template>
                                 </Dropdown>
                                 <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
-                                        <Accordion v-if="auth.user.role == 'administrator' || auth.user.role == 'pp' ">
+                                        <Accordion v-if="$page.props.auth.user.role == 'administrator' || $page.props.auth.user.role == 'admin' ">
                                             <accordion-panel>
-                                                <accordion-header >Human Ressources</accordion-header>
+                                                <accordion-header class="bg-white">Human Ressources</accordion-header>
                                                 <accordion-content>
                                                     <Link class="p-0" :href="route('users.index')">
                                                         <div class="max-w-xs p-3 text-center bg-gray-800 hover:bg-gray-600 dark:bg-gray-800 cursor-pointer">
@@ -175,9 +171,6 @@ console.warn("The {auth: Object} prop should be defined in every page where auth
 </template>
 <script>
 export default {
-    props:{
-        auth: Object,
-    },
     components: {
         Sidebar,
     },

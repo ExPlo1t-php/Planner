@@ -8,7 +8,7 @@ import { computed } from 'vue'
 <template>
     <Head title="Dashboard" />
 
-    <AuthenticatedLayout :auth="auth">
+    <AuthenticatedLayout>
     <div class="my-6 max-w-7xl m-auto">
         <div v-if="$page.props.flash.message" class="bg-red-100 border border-red-400 text-red-700 w-1/2 self-center px-4 py-3 m-auto rounded relative" role="alert">
             <strong class="font-bold">{{ $page.props.flash.message }}!</strong>
@@ -56,10 +56,3 @@ import { computed } from 'vue'
     </div>        
 </AuthenticatedLayout>
 </template>
-    <script>
-export default {
-    props:{
-        auth: Object,
-    },
-};
-</script>

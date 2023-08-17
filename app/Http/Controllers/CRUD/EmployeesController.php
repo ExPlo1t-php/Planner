@@ -17,6 +17,14 @@ use Inertia\Inertia;
 
 class EmployeesController extends Controller
 {
+    public function getPositionById($query){
+        $positionFilter = Position::select('id', 'name')->find($query);
+        return $positionFilter;
+    }
+    public function getPositionByName($query){
+        $positionFilter = Position::select('id', 'name')->where('name', $query)->first();
+        return $positionFilter;
+    }
     public function index(Request $request){
         // filter query
         $query = Employee::query();
@@ -52,6 +60,8 @@ class EmployeesController extends Controller
             $query->where('position_id', $position);
         }
         $items = $query->paginate(10);
+        // end of employee filtering
+        // filtering modal data -------------
         $filtered_teams = $teamsQ->get();
         
         $stationsQM = Station::query();
@@ -65,10 +75,25 @@ class EmployeesController extends Controller
         $filtered_stations_modal = $stationsQM->get();
         $filtered_teams_modal = $teamsQM->get();
         
+        // filtering for leaders (Team leaders, shift leaders, manager)
+        $leadersQM = Employee::query();
+        if ($request->has('positionM')){
+            // fetching selected id from request
+            $positionM = $request->query('positionM');
+            // fetching position id and name for comparison
+            $positionNameM =  $this->getPositionById($positionM)->name;
+            if($positionNameM == 'operator'){
+                $leadersQM->where('position_id', $this->getPositionByName('team leader')->id);
+            }elseif($positionNameM == 'team leader'){
+                $leadersQM->where('position_id', $this->getPositionByName('shift leader')->id);
+            }else{
+                $leadersQM->where('position_id', $this->getPositionByName('manager')->id);
+            }
+        }
+        $leaders = $leadersQM->select('id', 'first_name', 'last_name')->get();
         // other data fetching
-        // this has to change !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        $leaders = Employee::select('id', 'first_name')->get();
-        // this has to change
+        
+
         $departments = Department::select('id', 'name', 'positions')->get();
         $projects = Project::select('id', 'name')->get();
         $positions = Position::select('id', 'name')->get();
@@ -150,11 +175,36 @@ class EmployeesController extends Controller
         return to_route('employees.index');
     }
 
-    public function edit($id){
+    public function edit(Request $request, $id){
         $item = Employee::find($id);
-        // this has to change !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        $leaders = Employee::select('id', 'first_name')->where('position_id', 'LIKE', 2)->get();
-        // this has to change
+        // filtering modal data -------------
+        // leaders filtering 
+        $leadersQM = Employee::query();
+        if ($request->has('positionM')){
+            // fetching selected id from request
+            $positionM = $request->query('positionM');
+            // fetching position id and name for comparison
+            $positionNameM =  $this->getPositionById($positionM)->name;
+            if($positionNameM == 'operator'){
+                $leadersQM->where('position_id', $this->getPositionByName('team leader')->id);
+            }elseif($positionNameM == 'team leader'){
+                $leadersQM->where('position_id', $this->getPositionByName('shift leader')->id);
+            }else{
+                $leadersQM->where('position_id', $this->getPositionByName('manager')->id);
+            }
+        }
+        $stationsQM = Station::query();
+        $teamsQM = Team::query();
+        if ($request->has('projectM')){
+            $projectM = $request->query('projectM');
+            // Query Modal
+            $stationsQM->where('project_id', $projectM);
+            $teamsQM->where('project_id', $projectM);
+        }
+        $filtered_stations_modal = $stationsQM->get();
+        $filtered_teams_modal = $teamsQM->get();
+        $leaders =  $leadersQM->select('id', 'first_name', 'last_name')->get();
+
         $departments = Department::select('id', 'name', 'positions')->get();
         $projects = Project::select('id', 'name')->get();
         $positions = Position::select('id', 'name')->get();
@@ -170,6 +220,9 @@ class EmployeesController extends Controller
                                 'stations' => $stations,
                                 'teams' => $teams,
                                 'terminals' => $terminals,
+                                //  filtered data
+                                'stationsFM'=>$filtered_stations_modal,
+                                'teamsFM'=>$filtered_teams_modal,
                             ]);
     }
 

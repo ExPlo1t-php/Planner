@@ -23,6 +23,7 @@ class CheckRole
         $user = auth()->user();
 
         foreach ($roles as $role) {
+            // dd([$roles,$user,$user->role === $role]);
             if ($user->role === $role) {
                 return $next($request);
             }

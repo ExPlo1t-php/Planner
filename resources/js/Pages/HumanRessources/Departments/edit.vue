@@ -24,11 +24,10 @@
         });
     }
 
-    const isChecked = (positionName) => {
-        console.log(positionName)
-        if(positionName){
-            const isChecked = form.positions.includes(positionName);
-            console.log(positionName, form.positions, isChecked);
+    const isChecked = (positionId) => {
+        if(positionId){
+            const isChecked = form.positions.includes(positionId);
+            // console.log(positionId, form.positions, isChecked);
             return isChecked;
         }
     }
@@ -59,14 +58,14 @@
                     <InputLabel value="Positions" />
                     <div class="grid grid-cols-5">
                         <template v-for="position in positions" >
-                            <div>
+                            <div class="mx-3 flex">
                                 <input
                                     type="checkbox"
                                     :id="'position-' + position.name"
                                     v-model="form.positions"
                                     class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-gray-500 m-2"
-                                    :value="position.name"
-                                    :checked="isChecked(position.name)"
+                                    :value="position.id"
+                                    :checked="isChecked(position.id)"
                                     >
                                 {{ position.name }}
                             </div>

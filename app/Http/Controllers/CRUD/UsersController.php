@@ -12,21 +12,17 @@ use Inertia\Inertia;
 class UsersController extends Controller
 {
     public function index(Request $request){
-        // checking if the user has the role administrator
-        $user = auth()->user();
-        if($user->role == "administrator"){
-            $search = $request->input('search');
-            // validating if the $search variable is not empty
-            if($search){
-                $users = User::where('name', 'LIKE', "%{$search}%")
-                ->orWhere('email', 'LIKE', "%{$search}%")
-                ->orWhere('role', 'LIKE', "%{$search}%")
-                ->get();
-            }else{
-                $users = User::all();
-            }
-            return Inertia::render('Users/users', ['users' => $users, 'filter'=>$search]);
+        $search = $request->input('search');
+        // validating if the $search variable is not empty
+        if($search){
+            $users = User::where('name', 'LIKE', "%{$search}%")
+            ->orWhere('email', 'LIKE', "%{$search}%")
+            ->orWhere('role', 'LIKE', "%{$search}%")
+            ->get();
+        }else{
+            $users = User::all();
         }
+        return Inertia::render('Users/users', ['users' => $users, 'filter'=>$search]);
     }
 
     public function create(Request $request){

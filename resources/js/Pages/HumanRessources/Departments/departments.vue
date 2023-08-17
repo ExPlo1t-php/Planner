@@ -16,6 +16,8 @@
     import TextInput from '@/Components/TextInput.vue';
     import TextArea from '@/Components/Form/TextArea.vue';
     import SearchBar from '@/Components/Form/SearchBar.vue';
+    // functions
+    import { getNameById, parseAndJoinPositions } from '@/utils'
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, Link } from '@inertiajs/vue3';
@@ -82,13 +84,13 @@
                             <InputLabel value="positions" />
                             <div class="grid grid-cols-5">
                                 <template v-for="position in positions" >
-                                    <div>
+                                    <div class="mx-3 flex">
                                         <input
                                          type="checkbox"
                                          :id="'position-' + position.name"
                                          v-model="form.positions"
-                                         class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-gray-600 m-2"
-                                         :value="position.name"
+                                         class="rounded border-gray-300 text-gray-600 shadow-sm focus:ring-gray-600 m-1"
+                                         :value="position.id"
                                          >
                                         {{ position.name }}
                                     </div>
@@ -129,7 +131,7 @@
                                 {{ department.info }}
                             </TableRowItem>
                             <TableRowItem>
-                                {{  parseAndJoinPositions(department.positions) }}
+                                {{  this.parseAndJoinPositions(department.positions) }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
@@ -177,15 +179,9 @@ export default {
         }
     },
     methods:{
-        parseAndJoinPositions(positionsString) {
-            try {
-                const positionsArray = JSON.parse(positionsString);
-                return positionsArray.join(', ');
-            } catch (error) {
-                console.error('Error parsing positions:', error);
-            }
-        },
-                // table sort
+        getNameById,
+        parseAndJoinPositions,
+        // table sort
         sortTable(collection, key) {
             if (this.sortKey === key) {
                 this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';

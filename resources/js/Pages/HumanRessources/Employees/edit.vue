@@ -8,9 +8,9 @@
     import { FileInput } from 'flowbite-vue';
     // Others
     import { ref, toRefs, watch } from 'vue';
-    import { Head, useForm, Link } from '@inertiajs/vue3';
-    const { employee, leaders, departments, projects, positions, stations, teams, terminals } = toRefs(props);
-    const props = defineProps(['employee', 'leaders', 'departments', 'projects', 'positions', 'stations', 'teams', 'terminals'])
+    import { Head, useForm, Link, router } from '@inertiajs/vue3';
+    const { employee, leaders, departments, projects, positions, stations, teams, terminals, stationsFM, teamsFM } = toRefs(props);
+    const props = defineProps(['employee', 'leaders', 'departments', 'projects', 'positions', 'stations', 'teams', 'terminals', 'stationsFM', 'teamsFM'])
     // Initialize the form with retrieved data
     const form = useForm({
         id: employee.value.id,
@@ -38,35 +38,56 @@
         form.station_id=null;
         form.team_id=null;
     };
+ // filtering modal select inputs:
+    let projectId = ref(null);
+    let positionId = ref(null);
+    // project filter
+    watch(() => form.project_id,
+    (value)=>{
+        projectId = value;
+        // console.log(projectId)
+        if(projectId){
+            router.visit(route('employees.edit', {id: form.id ,projectM: projectId||null}), { preserveState: true });
+        }
+    });
+    // department filter
+    watch(() => form.position_id,
+    (value) =>{
+        reset()
+        positionId = value;
+        // console.log(positionId)
+        if(positionId){
+            router.visit(route('employees.edit', {id: form.id ,positionM: positionId||null}), { preserveState: true });
+        }
+    })
     watch(() => form.department_id,
     (value) =>{
         reset()
-        console.log(value);
     }
     )
-
     // ------------------------
     const getNameById = (object, id) => {
-            if(id!== null){
-                const foundObject = object.find(obj => obj.id == id);
-                console.log(foundObject)
+        if(id!== null){
+            const foundObject = object.find(obj => obj.id == id);
+            if(foundObject){
                 if (foundObject.name){
                     return foundObject ? foundObject.name : null;
                 }else{
                     return foundObject ? foundObject.first_name : null;
                 }
-            }
+            } 
+        }
     }
-    const getDepartmentPositions = (departments, name) => {
+    const getDepartmentPositions = (departments, id)=>{
         // this  method fetches the  positions  available   in  the selected department 
-        const department = departments.find(department => department.name === name);
+        const department = departments.find(department => department.id == id);
         return JSON.parse(department.positions)
     }
     const getPositions = (positions, departmentPos) => {
         // this  method takes an array of department positions from "getDepartmentPositions"
         // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
         const filteredData = positions.filter(object =>
-        departmentPos.includes(object.name)
+        departmentPos.includes(object.id)
         );
         return filteredData
     }
@@ -141,7 +162,7 @@
 
                     <InputError class="mt-2" :message="form.errors.department_id" />
                 </div>
-                <div v-if="form.department_id == 2">
+                <div v-if="getNameById(departments, form.department_id) == 'assembly'">
                     <InputLabel for="project_id" value="Projet " />
 
                     <SelectInput
@@ -171,7 +192,7 @@
                     >
                     <option selected disabled hidden value="">Choisir un Position</option>
                     <template v-if="form.department_id">
-                        <template v-for="position in getPositions(positions, getDepartmentPositions(departments, getNameById(departments, form.department_id)))">
+                        <template v-for="position in getPositions(positions, getDepartmentPositions(departments, form.department_id))">
                             <option :value="position.id">{{ position.name }}</option>
                         </template>
                     </template>
@@ -183,7 +204,7 @@
 
                     <InputError class="mt-2" :message="form.errors.position_id" />
                 </div>
-                <div v-if="form.department_id == 2 || form.department_id == 1">
+                <div v-if="getNameById(departments, form.department_id) == 'assembly' || getNameById(departments, form.department_id) == 'pre assembly'">
                     <InputLabel for="station_id" value="Station " />
 
                     <SelectInput
@@ -194,7 +215,7 @@
                         autofocus
                     >
                     <option selected disabled hidden value="">Choisir un Station</option>
-                        <template v-for="station in stations">
+                        <template v-for="station in stationsFM">
                             <option :value="station.id">{{ station.name }}</option>
                         </template>
                     </SelectInput>
@@ -224,7 +245,7 @@
 
                     <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                 </div>
-                <div v-if="form.department_id == 2 || form.department_id == 1">
+                <div v-if="getNameById(departments, form.department_id) == 'assembly' || getNameById(departments, form.department_id) == 'pre assembly'">
                     <InputLabel for="team_id" value="Team" />
 
                     <SelectInput
@@ -234,7 +255,7 @@
                         autofocus
                     >
                     <option selected disabled hidden value="">Choisir un Team</option>
-                        <template v-for="team in teams">
+                        <template v-for="team in teamsFM">
                             <option :value="team.id">{{ team.name }}</option>
                         </template>
                     </SelectInput>

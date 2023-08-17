@@ -39,13 +39,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth','check.role:administrator')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // CRUD routes----------------------------------------------------------
     // Users 
-    Route::group(['prefix'=>'users'],function () {
+    Route::group(['prefix'=>'users', 'middleware'=> 'check.role:administrator,admin'],function () {
         Route::get('index', [UsersController::class, 'index'])->name('users.index');
         Route::post('create', [UsersController::class, 'create'])->name('users.create');
         Route::delete('destroy/{id}', [UsersController::class, 'destroy'])->name('users.destroy');

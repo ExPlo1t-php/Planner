@@ -13,21 +13,17 @@ class VehiclesController extends Controller
 {
     
     public function index(Request $request){
-        // checking if the user has the role administrator
-        $user = auth()->user();
-        if($user->role == "administrator"){
-            $search = $request->input('search');
-            // validating if the $search variable is not empty
-            if($search){
-                $vehicles = Vehicle::where('registration_number', 'LIKE', "%{$search}%")
-                ->orWhere('entree_date', 'LIKE', "%{$search}%")
-                ->orWhere('bus_number', 'LIKE', "%{$search}%")
-                ->paginate(10);
-            }else{
-                $vehicles = Vehicle::paginate(10);
-            }
-            return Inertia::render('Transport/Vehicles/vehicles', ['vehicles' => $vehicles, 'filter'=>$search]);
+        $search = $request->input('search');
+        // validating if the $search variable is not empty
+        if($search){
+            $vehicles = Vehicle::where('registration_number', 'LIKE', "%{$search}%")
+            ->orWhere('entree_date', 'LIKE', "%{$search}%")
+            ->orWhere('bus_number', 'LIKE', "%{$search}%")
+            ->paginate(10);
+        }else{
+            $vehicles = Vehicle::paginate(10);
         }
+        return Inertia::render('Transport/Vehicles/vehicles', ['vehicles' => $vehicles, 'filter'=>$search]);
     }
 
     public function create(Request $request){

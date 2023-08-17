@@ -18,8 +18,6 @@
     import TextArea from '@/Components/Form/TextArea.vue';
     import SelectInput from '@/Components/Form/SelectInput.vue';
     import SearchBar from '@/Components/Form/SearchBar.vue';
-    // functions
-    import { getNameById } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, Link } from '@inertiajs/vue3';
@@ -61,8 +59,6 @@
     let project = ref(null);
     let team = ref(null);
     let position = ref(null);
-    let projectId = ref(null);
-    let positionId = ref(null);
     watch(department, value => {
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
     }), { preserveState: true });
@@ -79,13 +75,11 @@
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
     , position: position.value||null}), { preserveState: true });
     });
-    // project filter
-    watch(() => form.project_id,
-    (value)=>{
-        projectId = value;
+    watch(() => form.project_id, (value)=>{
+        const projectId = value;
         // console.log(projectId)
         if(projectId){
-            router.visit(route('employees.index', {projectM: projectId||null}), { preserveState: true });
+            router.visit(route('employees.index', {projectM: projectId }), { preserveState: true });
         }
     });
     //  filter reset
@@ -94,16 +88,6 @@
         form.station_id=null;
         form.team_id=null;
     };
-    // department filter
-    watch(() => form.position_id,
-    (value) =>{
-        reset()
-        positionId = value;
-        // console.log(positionId)
-        if(positionId){
-            router.visit(route('employees.index', {positionM: positionId||null}), { preserveState: true });
-        }
-    })
     watch(() => form.department_id,
     (value) =>{
         reset()
@@ -116,11 +100,6 @@
         team.value = null;
         position.value = null;
         router.visit(route('employees.index'), { preserveState: true });
-    };
-
-    const resetModalFilter = () => {
-        departmentId = null;
-        projectId = null;
     };
     
     
@@ -248,7 +227,7 @@
                                 autofocus
                                 >
                             <option selected disabled hidden value="">Choisir une Departement</option>
-                            <option :value="null">Aucun Departement</option>
+                            <option value="">Aucun Departement</option>
                                 <template v-for="department in departments">
                                     <option :value="department.id">{{ department.name }}</option>
                                 </template>
@@ -256,7 +235,7 @@
                             
                             <InputError class="mt-2" :message="form.errors.department_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly'">
+                        <div v-if="form.department_id == 2">
                             <InputLabel for="project_id" value="Projet " />
 
                             <SelectInput
@@ -265,7 +244,7 @@
                                 v-model="form.project_id"
                                 autofocus
                             >
-                            <option :value="null">Aucun Projet</option>
+                            <option value="">Aucun Projet</option>
                             <option selected disabled hidden value="">Choisir un Projet</option>
                                 <template v-for="project in projects">
                                     <option :value="project.id">{{ project.name }}</option>
@@ -286,7 +265,7 @@
                             >
                             <option selected disabled hidden value="">Choisir un Position</option>
                             <template v-if="form.department_id">
-                                <template v-for="position in getPositions(positions, getDepartmentPositions(departments, form.department_id))">
+                                <template v-for="position in getPositions(positions, getDepartmentPositions(departments, getNameById(departments, form.department_id)))">
                                     <option :value="position.id">{{ position.name }}</option>
                                 </template>
                             </template>
@@ -298,7 +277,7 @@
 
                             <InputError class="mt-2" :message="form.errors.position_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly' || this.getNameById(departments, form.department_id) == 'pre assembly'">
+                        <div v-if="form.department_id == 2 || form.department_id == 1">
                             <InputLabel for="station_id" value="Workstation " />
                             
                             <SelectInput
@@ -338,7 +317,7 @@
 
                             <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly' || this.getNameById(departments, form.department_id) == 'pre assembly'">
+                        <div v-if="form.department_id == 2 || form.department_id == 1">
                             <InputLabel for="team_id" value="Team" />
                             
                             <SelectInput
@@ -422,44 +401,44 @@
                                 <div class="text-gray-600">{{ employee.last_name }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(departments, employee.department_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(departments, employee.department_id) }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(projects, employee.project_id ) }}</div>
+                                <div class="text-gray-600">{{ getNameById(projects, employee.project_id ) }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(positions, employee.position_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(positions, employee.position_id) }}</div>
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.station_id">
-                                    {{ this.getNameById(stations, employee.station_id) }}
+                                    {{ getNameById(stations, employee.station_id) }}
                                 </template>
                                 <template v-else>
-                                    <div class="text-red-400">N/A</div>
+                                    <div class="text-red-400">Pas de workstation</div>
                                 </template>
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.team_leader_manager_id">
-                                    {{ this.getNameById(leaders, employee.team_leader_manager_id) }}
+                                    {{ getNameById(leaders, employee.team_leader_manager_id) }}
                                 </template>
                                 <template v-else>
-                                    <div class="text-red-400">N/A</div>
+                                    <div class="text-red-400">Pas de Team Leader/Manager</div>
                                 </template>
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.team_id">
-                                    {{ this.getNameById(teams, employee.team_id) }}
+                                    {{ getNameById(teams, employee.team_id) }}
                                 </template>
                                 <template v-else>
-                                    <div class="text-red-400">N/A</div>
+                                    <div class="text-red-400">Pas d'équipe</div>
                                 </template>
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.terminal_id">
-                                    {{ this.getNameById(terminals, employee.terminal_id) }}
+                                    {{ getNameById(terminals, employee.terminal_id) }}
                                 </template>
                                 <template v-else>
-                                    <div class="text-red-400">N/A</div>
+                                    <div class="text-red-400">Pas de terminal</div>
                                 </template>
                             </TableRowItem>
                             <TableRowItem>
@@ -544,19 +523,27 @@ export default {
         }
     },
     methods: {
-        getNameById,
-        getDepartmentPositions(departments, id){
-            // this  method fetches the  positions  available   in  the selected department
-            if(id!=null){
-                const department = departments.find(department => department.id == id);
-                return JSON.parse(department.positions)
-            } 
+        getNameById(object, id) {
+            if(id!== null){
+                const foundObject = object.find(obj => obj.id == id);
+                // console.log(foundObject)
+                if (foundObject.name){
+                    return foundObject ? foundObject.name : null;
+                }else{
+                    return foundObject ? foundObject.first_name : null;
+                }
+            }
+        },
+        getDepartmentPositions(departments, name){
+            // this  method fetches the  positions  available   in  the selected department 
+            const department = departments.find(department => department.name === name);
+            return JSON.parse(department.positions)
         },
         getPositions(positions, departmentPos){
             // this  method takes an array of department positions from "getDepartmentPositions"
             // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
             const filteredData = positions.filter(object =>
-            departmentPos.includes(object.id)
+            departmentPos.includes(object.name)
             );
             return filteredData
         },
