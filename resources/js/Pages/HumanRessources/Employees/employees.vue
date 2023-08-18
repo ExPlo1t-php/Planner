@@ -465,7 +465,9 @@
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
                                     <EditLink :uid="employee.id" :item="'employees'"/>
-                                    <DeleteLink :uid="employee.id" :item="'employees'"/>
+                                    <template v-if="$page.props.auth.user.role == 'administrator'">
+                                        <DeleteLink :uid="employee.id" :item="'employees'"/>
+                                    </template>
                                 </div>
                             </TableRowItem>
                         </TableRow>

@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Module from '@/Components/Module.vue'
 import { Head, Link, usePage} from '@inertiajs/vue3';
 import { computed } from 'vue'
+const { props } = usePage();
+const role = props.auth.user.role
 </script>
 
 <template>
@@ -30,14 +32,14 @@ import { computed } from 'vue'
         <section class="bg-white dark:bg-gray-900">
             <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Ressources humaines</h2>
             <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2">
-                <Module link="users.index"> 
+                <Module v-if="role=='administrator'" link="users.index"> 
                     Gestion des Utilisateurs
                 </Module>
                 <Module link="projects.index">
                     Gestion des Projets
                 </Module>
                 <Module link="positions.index">
-                    Gestion des Postes
+                    Gestion des positions
                 </Module>
                 <Module link="teams.index">
                     Gestion des Teams
