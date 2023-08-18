@@ -15,6 +15,7 @@
 
         
         <!-- Scripts -->
+        {{-- ressources/css/app.css should be removed on production build --}}
         @routes
         @vite(['resources/js/app.js', 'resources/css/app.css', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead

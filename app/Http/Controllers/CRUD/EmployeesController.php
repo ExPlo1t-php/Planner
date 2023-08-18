@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRUD;
 
 use App\Http\Controllers\Controller;
+use App\Models\Absence;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
@@ -266,5 +267,38 @@ class EmployeesController extends Controller
         return to_route('employees.index');
     }
 
+    // absence management
 
+    public function new_absence(Request $request, $id){
+        $item = Employee::find($id);
+        return Inertia::render('HumanRessources/Employees/absence', 
+        ['employee' => $item]);
+    }
+
+    public function post_absence(Request $request, $id){
+        $validatedData = $request->validate([
+            'id' => 'required|integer',
+            'start_date' => 'required|date|max:255|after_or_equal:today',
+            'reason' => 'string|nullable',
+            'end_date' => 'required|date|max:255',
+        ]);
+
+        $item = new Absence();
+        $item->employee_id = $validatedData['id'];
+        $item->reason = $validatedData['reason'];
+        $item->start_date = $validatedData['start_date'];
+        $item->end_date = $validatedData['end_date'];
+        $item->save();
+        return to_route('employees.index');
+    }
+
+    public function show_absences(){
+        $employees = Employee::get();
+        $items = Absence::paginate(10);
+        return Inertia::render('HumanRessources/Employees/showAbsence', 
+        [
+        'employees' => $employees,
+        'absences' => $items,
+        ]);
+    }
 }

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id');
             $table->string('reason')->nullable();
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
 
             $table->foreign('employee_id')->references('id')->on('employees')->restrictOnDelete();

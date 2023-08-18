@@ -1,5 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+const props = defineProps({
+  link: {
+      type: String,
+      required: true,
+    },
+});
 </script>
 <template>
   <Link :href="route(link)" class="m-4">
@@ -10,13 +16,3 @@ import { Link } from '@inertiajs/vue3';
     </div>
   </Link>
 </template>
-<script>
-export default {
-  props: {
-    link: {
-      type: String,
-      required: true,
-    },
-  },
-};
-</script>

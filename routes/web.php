@@ -124,6 +124,10 @@ Route::middleware('auth')->group(function () {
         Route::get('edit/{id}', [EmployeesController::class, 'edit'])->name('employees.edit');
         // put method gives validation error concerning photo/employee_number/firstname/lastname
         Route::post('update/{id}', [EmployeesController::class, 'update'])->name('employees.update');
+        // absence routes
+        Route::get('new_absence/{id}', [EmployeesController::class, 'new_absence'])->name('employees.new_absence');
+        Route::post('post_absence/{id}', [EmployeesController::class, 'post_absence'])->name('employees.post_absence');
+        Route::get('show_absences', [EmployeesController::class, 'show_absences'])->name('employees.show_absences');
     });
 // CRUD routes----------------------------------------------------------
 });

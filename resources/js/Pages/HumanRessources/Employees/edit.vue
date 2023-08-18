@@ -293,8 +293,8 @@
                     <InputError class="mt-2" :message="form.errors.photo" />
                 </div>
                 <div class="flex ">
-                    <button type="submit" class="w-full text-white bg-gray-800 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
-                    <Link :href="route('employees.index')" class="w-full text-black bg-white border-2 hover:border-gray-800 border  focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Annuler</Link>
+                    <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>
+                    <Link :href="route('employees.index')" class="w-full text-black bg-white border-2 hover:border-gray-800 border  focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-5 px-5 py-2.5 text-center">Annuler</Link>
                 </div>
             </form>
         </div>

@@ -8,6 +8,7 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import EditLink from '@/Components/Table/EditLink.vue';
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
+    import AbsenceLink from '@/Components/Table/AbsenceLink.vue';
     import Pagination from '@/Components/Table/Pagination.vue';
     // Form items
     import { Modal, FileInput, Radio } from 'flowbite-vue';
@@ -15,11 +16,10 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     // import FileInput from '@/Components/Form/FileInput.vue';
-    import TextArea from '@/Components/Form/TextArea.vue';
     import SelectInput from '@/Components/Form/SelectInput.vue';
     import SearchBar from '@/Components/Form/SearchBar.vue';
     // functions
-    import { getNameById } from '@/utils';
+    import { getNameById, getDepartmentPositions, getPositions } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, Link } from '@inertiajs/vue3';
@@ -464,6 +464,7 @@
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
+                                    <AbsenceLink :uid="employee.id" item="employees.new_absence"/>
                                     <EditLink :uid="employee.id" :item="'employees'"/>
                                     <template v-if="$page.props.auth.user.role == 'administrator'">
                                         <DeleteLink :uid="employee.id" :item="'employees'"/>
@@ -547,21 +548,7 @@ export default {
     },
     methods: {
         getNameById,
-        getDepartmentPositions(departments, id){
-            // this  method fetches the  positions  available   in  the selected department
-            if(id!=null){
-                const department = departments.find(department => department.id == id);
-                return JSON.parse(department.positions)
-            } 
-        },
-        getPositions(positions, departmentPos){
-            // this  method takes an array of department positions from "getDepartmentPositions"
-            // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
-            const filteredData = positions.filter(object =>
-            departmentPos.includes(object.id)
-            );
-            return filteredData
-        },
+
         // table sort
         sortTable(collection, key) {
             if (this.sortKey === key) {

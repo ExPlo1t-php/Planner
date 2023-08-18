@@ -5,9 +5,12 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Sidebar.vue';
+import AccordionLink from '@/Components/AccordionLink.vue';
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
+const { props } = usePage();
+const role = props.auth.user.role
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -74,17 +77,13 @@ const showingNavigationDropdown = ref(false);
                                     </template>
                                 </Dropdown>
                                 <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
-                                        <Accordion v-if="$page.props.auth.user.role == 'administrator' || $page.props.auth.user.role == 'admin' ">
+                                        <Accordion v-if="role == 'administrator' || role == 'admin' ">
                                             <accordion-panel>
                                                 <accordion-header class="bg-white">Human Ressources</accordion-header>
                                                 <accordion-content>
-                                                    <Link class="p-0" :href="route('users.index')">
-                                                        <div class="max-w-xs p-3 text-center bg-gray-800 hover:bg-gray-600 dark:bg-gray-800 cursor-pointer">
-                                                        <h6 class=" text-lg font-semibold tracking-tight text-white">
-                                                            Gestion Des Utilisateurs
-                                                        </h6>
-                                                        </div>
-                                                    </Link>
+                                                    <AccordionLink link="users.index">
+                                                        Gestion Des Utilisateurs
+                                                    </AccordionLink>
                                                 </accordion-content>
                                             </accordion-panel>
                                         </Accordion>
