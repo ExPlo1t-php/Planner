@@ -13,7 +13,7 @@
       'transform scale-x-30': collapsed, 
       'scale-x-100': !collapsed,
     }"
-    class="fixed top-0 left-0 bottom-0 z-0 bg-gray-800"
+    class="fixed top-0 left-0 bottom-0 z-20 bg-gray-800"
   >
   <button v-if="!collapsed" @click="closeSidebar" class="text-gray-100 bg-transparent hover:bg-gray-500 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">

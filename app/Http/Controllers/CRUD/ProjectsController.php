@@ -19,7 +19,8 @@ class ProjectsController extends Controller
         }else{
             $items = Project::paginate(10);
         }
-            return Inertia::render('HumanRessources/Projects/projects', ['projects' => $items]);
+        $filters = $request->all();  
+        return Inertia::render('HumanRessources/Projects/projects', ['projects' => $items, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

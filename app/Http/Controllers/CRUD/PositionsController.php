@@ -19,7 +19,8 @@ class PositionsController extends Controller
         }else{
             $items = Position::paginate(10);
         }
-            return Inertia::render('HumanRessources/Positions/positions', ['positions' => $items]);
+        $filters = $request->all();  
+        return Inertia::render('HumanRessources/Positions/positions', ['positions' => $items, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

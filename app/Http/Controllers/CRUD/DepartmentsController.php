@@ -14,6 +14,7 @@ class DepartmentsController extends Controller
     public function index(Request $request){
         $search = $request->input('search');
         $positions = Position::get();
+        $filters = $request->all();  
         // validating if the $search variable is not empty
         if($search){
             $items = Department::where('name', 'LIKE', "%{$search}%")
@@ -22,7 +23,7 @@ class DepartmentsController extends Controller
         }else{
             $items = Department::paginate(10);
         }
-            return Inertia::render('HumanRessources/Departments/departments', ['departments' => $items, 'positions'=>$positions]);
+            return Inertia::render('HumanRessources/Departments/departments', ['departments' => $items, 'positions'=>$positions, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

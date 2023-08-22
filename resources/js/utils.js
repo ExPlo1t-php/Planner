@@ -11,6 +11,18 @@ export function getNameById(object, id) {
         } 
     }
 }
+export function getIdByName(object, name) {
+// Retrieves the id or first based on the provided name.
+    if(name!== null){
+        const foundObjectName = object.find(obj => obj.name == name);
+        const foundObjectFirstName = object.find(obj => obj.first_name == name);
+        if (foundObjectName.name){
+            return foundObjectName ? foundObjectName.name : null;
+        }else{
+            return foundObjectFirstName ? foundObjectFirstName.first_name : null;
+        }
+    }
+}
 
 export function objectFinder(object, id){
     // searches for an object inside another object and return it
@@ -36,12 +48,12 @@ export function checkDateValidity(date){
 
 export function getValiditySvg(bool){
     if(bool){
-        return `<svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        return ` <title>valid</title><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke="#23DC3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>`
     }else{
         return `<svg width="30px" height="30px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <title>cancel</title>
+        <title>invalid</title>
         <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
             <g id="work-case" fill="#FF9494" transform="translate(91.520000, 91.520000)">
                 <polygon id="Close" points="328.96 30.2933333 298.666667 1.42108547e-14 164.48 134.4 30.2933333 1.42108547e-14 1.42108547e-14 30.2933333 134.4 164.48 1.42108547e-14 298.666667 30.2933333 328.96 164.48 194.56 298.666667 328.96 328.96 298.666667 194.56 164.48">

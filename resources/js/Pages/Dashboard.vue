@@ -53,6 +53,9 @@ const role = props.auth.user.role
                 <Module link="employees.index">
                     Gestion des Employés
                 </Module>
+                <Module link="employees.show_absences">
+                    Gestion des Absences
+                </Module>
             </div>
             </section>
     </div>        

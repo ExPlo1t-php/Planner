@@ -5,6 +5,7 @@
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       ref="input"
+      min='2022-01-01'
     />
   </template>
   

@@ -18,7 +18,7 @@
     import DateInput from '@/Components/Form/DateInput.vue';
     // Others
     import { ref, watch } from 'vue'
-    import { Head, useForm, router } from '@inertiajs/vue3';
+    import { Head, useForm, router, usePage } from '@inertiajs/vue3';
     // modal functionning
     const isShowModal = ref(false)
     function closeModal() {
@@ -39,7 +39,8 @@
         });
     }
     // search
-    let search = ref('');
+    const { props } = usePage();
+    let search = ref(props.filters.search||null);
         watch(search, value=>{
     router.get(route('vehicles.index'), { search: value }, { preserveState: true});
     })
@@ -52,7 +53,13 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="flex justify-between justify-end items-center mb-4">
-                    <SearchBar v-model="search"/>
+                    <input
+                        class="border border-gray-300 rounded-lg px-2 lg:w-40"
+                        type="search"
+                        name="search"
+                        placeholder="Recherche"
+                        v-model="search"
+                        >
                     <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter une nouvelle Vehicule
                     </button>

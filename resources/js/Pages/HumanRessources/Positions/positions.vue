@@ -17,7 +17,7 @@
     import SearchBar from '@/Components/Form/SearchBar.vue';
     // Others
     import { ref, watch } from 'vue'
-    import { Head, useForm, router, Link } from '@inertiajs/vue3';
+    import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
     const isShowModal = ref(false)
     function closeModal() {
         isShowModal.value = false
@@ -36,8 +36,9 @@
         });
     }
     // search
-    let search = ref('');
-        watch(search, value=>{
+    const { props } = usePage();
+    let search = ref(props.filters.search||null);
+    watch(search, value=>{
     router.get(route('positions.index'), { search: value }, { preserveState: true});
     })
 </script>
@@ -49,7 +50,13 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow">
                 <!-- Modal toggle -->
                 <div class="flex justify-between items-center mb-4">
-                    <SearchBar v-model="search"/>
+                    <input
+                        class="border border-gray-300 rounded-lg px-2 lg:w-40"
+                        type="search"
+                        name="search"
+                        placeholder="Recherche"
+                        v-model="search"
+                        >
                     <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel Position
                     </button>

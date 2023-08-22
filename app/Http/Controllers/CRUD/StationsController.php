@@ -21,7 +21,8 @@ class StationsController extends Controller
             $items = Station::paginate(10);
         }
         $projects = Project::all();
-            return Inertia::render('HumanRessources/Stations/stations', ['stations' => $items, 'projects'=>$projects]);
+        $filters = $request->all();  
+            return Inertia::render('HumanRessources/Stations/stations', ['stations' => $items, 'projects'=>$projects, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

@@ -23,7 +23,8 @@ class VehiclesController extends Controller
         }else{
             $vehicles = Vehicle::paginate(10);
         }
-        return Inertia::render('Transport/Vehicles/vehicles', ['vehicles' => $vehicles, 'filter'=>$search]);
+        $filters = $request->all();  
+        return Inertia::render('Transport/Vehicles/vehicles', ['vehicles' => $vehicles, 'filter'=>$search, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

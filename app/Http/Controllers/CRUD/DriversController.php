@@ -23,7 +23,8 @@ class DriversController extends Controller
                 $drivers = Driver::paginate(10);
             }
             $vehicles = Vehicle::select('id', 'bus_number')->get();
-            return Inertia::render('Transport/Drivers/drivers', ['drivers' => $drivers, 'vehicles'=>$vehicles]);
+            $filters = $request->all();  
+            return Inertia::render('Transport/Drivers/drivers', ['drivers' => $drivers, 'vehicles'=>$vehicles, 'filters'=>$filters]);
         }
 
         public function create(Request $request){

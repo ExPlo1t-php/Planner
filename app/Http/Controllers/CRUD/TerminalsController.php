@@ -24,7 +24,8 @@ class TerminalsController extends Controller
             $terminals = Terminal::paginate(10);
         }
         $vehicles = Vehicle::select('id', 'bus_number')->get();
-        return Inertia::render('Transport/Terminals/terminals', ['terminals' => $terminals, 'vehicles'=>$vehicles]);
+        $filters = $request->all();  
+        return Inertia::render('Transport/Terminals/terminals', ['terminals' => $terminals, 'vehicles'=>$vehicles, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

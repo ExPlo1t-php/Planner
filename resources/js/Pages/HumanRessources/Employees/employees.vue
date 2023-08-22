@@ -15,14 +15,12 @@
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
-    // import FileInput from '@/Components/Form/FileInput.vue';
     import SelectInput from '@/Components/Form/SelectInput.vue';
-    import SearchBar from '@/Components/Form/SearchBar.vue';
     // functions
     import { getNameById, getDepartmentPositions, getPositions } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
-    import { Head, useForm, router, Link } from '@inertiajs/vue3';
+    import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
     const isShowModal = ref(false)
     function closeModal() {
         isShowModal.value = false
@@ -49,20 +47,22 @@
             onSuccess: () => {form.reset("photo", "first_name", "last_name", "employee_number", "terminal_id")},
         });
     }
-    // search
-    let search = ref(null);
-    watch(search, value => {
-        router.visit(route('employees.index', { search: value, department: department.value||null, project: project.value||null }), { preserveState: true });
-    });
-
-    // filters
+    
+    const { props } = usePage();
     const option = ref('');
-    let department = ref(null);
-    let project = ref(null);
-    let team = ref(null);
-    let position = ref(null);
+    let search = ref(props.filters.search||null);
+    let department = ref(props.filters.department||null);
+    let project = ref(props.filters.project||null);
+    let team = ref(props.filters.team||null);
+    let position = ref(props.filters.position||null);
     let projectId = ref(null);
     let positionId = ref(null);
+    // search
+    watch(search, value => {
+        router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null }), { preserveState: true });
+    });
+    console.log(search)
+    // filters
     watch(department, value => {
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
     }), { preserveState: true });
@@ -133,7 +133,13 @@
             <div class="max-w-fit mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
                 <!-- Modal toggle -->
                 <div class="lg:flex sm:block md:block justify-between items-center mb-4">
-                    <SearchBar v-model="search"/>
+                    <input
+                        class="border border-gray-300 rounded-lg px-2 lg:w-40"
+                        type="search"
+                        name="search"
+                        placeholder="Recherche"
+                        v-model="search"
+                        >
                     <div class="flex">
                         <select v-model="department" class="w-24 text-sm h-10 m-2">
                             <option selected :value="null">All Departments</option>

@@ -60,7 +60,7 @@ class EmployeesController extends Controller
             $position = $request->query('position');
             $query->where('position_id', $position);
         }
-        $items = $query->paginate(10);
+        $items = $query->paginate(10)->withQueryString();
         // end of employee filtering
         // filtering modal data -------------
         $filtered_teams = $teamsQ->get();
@@ -100,7 +100,8 @@ class EmployeesController extends Controller
         $positions = Position::select('id', 'name')->get();
         $teams = Team::select('id', 'name')->get();
         $terminals = Terminal::select('id', 'name')->get();
-        $stations = Station::select('id', 'name')->get();     
+        $stations = Station::select('id', 'name')->get(); 
+        $filters = $request->all();  
 
         return Inertia::render('HumanRessources/Employees/employees',
         ['employees' => $items,
@@ -112,6 +113,7 @@ class EmployeesController extends Controller
             'teams' => $teams,
             'terminals' => $terminals,
         //  filtered data
+            'filters'=>$filters,
             'teamsF'=>$filtered_teams,
             'stationsFM'=>$filtered_stations_modal,
             'teamsFM'=>$filtered_teams_modal,
@@ -278,7 +280,7 @@ class EmployeesController extends Controller
     public function post_absence(Request $request, $id){
         $validatedData = $request->validate([
             'id' => 'required|integer',
-            'start_date' => 'required|date|max:255|after_or_equal:today',
+            'start_date' => 'required|date|max:255|after_or_equal:01/01/2022',
             'reason' => 'string|nullable',
             'end_date' => 'required|date|max:255',
         ]);
@@ -289,16 +291,29 @@ class EmployeesController extends Controller
         $item->start_date = $validatedData['start_date'];
         $item->end_date = $validatedData['end_date'];
         $item->save();
-        return to_route('employees.index');
+        return to_route('employees.show_absence');
     }
 
-    public function show_absences(){
+    public function show_absences(Request $request){
         $employees = Employee::get();
-        $items = Absence::paginate(10);
+        $search = $request->input('search');
+        $query = Absence::query();
+        if($search){
+            $employeeId = Employee::where('first_name', 'LIKE', "%{$search}%")
+            ->orWhere('last_name', 'LIKE', "%{$search}%")
+            ->orWhere('employee_number', 'LIKE', "%{$search}%")->select('id')->first();
+            if($employeeId){
+                $query->where('employee_id', 'LIKE', "%{$employeeId->id}%");
+            }
+            $query->orWhere('reason', 'Like', "%{$search}%");
+        }
+        $items = $query->paginate(10);
+        $filters = $request->all();  
         return Inertia::render('HumanRessources/Employees/showAbsence', 
         [
         'employees' => $employees,
         'absences' => $items,
+        'filters' => $filters,
         ]);
     }
 }

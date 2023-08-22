@@ -22,8 +22,9 @@ class TeamsController extends Controller
             $items = Team::paginate(10);
         }
         $projects = Project::all();
-            return Inertia::render('HumanRessources/Teams/teams', 
-            ['teams' => $items, 'projects'=>$projects]);
+        $filters = $request->all();  
+        return Inertia::render('HumanRessources/Teams/teams', 
+        ['teams' => $items, 'projects'=>$projects, 'filters'=>$filters]);
     }
 
     public function create(Request $request){

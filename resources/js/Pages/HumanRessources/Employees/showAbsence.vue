@@ -8,14 +8,29 @@
     import TableRow from '@/Components/Table/TableRow.vue';
     import Pagination from '@/Components/Table/Pagination.vue';
     import { getNameById, objectFinder, checkDateValidity, getValiditySvg } from '@/utils';
+    import SearchBar from '@/Components/Form/SearchBar.vue';
+    import { ref, watch } from 'vue'
+    import { router, usePage } from '@inertiajs/vue3';
 
-
+    // search
+    const { props } = usePage();
+    let search = ref(props.filters.search||null);
+    watch(search, value=>{
+    router.get(route('employees.show_absences'), { search: value }, { preserveState: true});
+    })
 </script>
 <template>
     <AuthenticatedLayout>
         <Head title="Absence management"/>
         <div class="py-12 ">
             <div class="max-w-fit mx-auto sm:px-6 lg:px-8 p-3 bg-white overflow-auto">
+                <input
+                        class="border border-gray-300 rounded-lg px-2 lg:w-40"
+                        type="search"
+                        name="search"
+                        placeholder="Recherche"
+                        v-model="search"
+                        >
                 <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <TableHead>
                         <TableHeadItem>Matricule de l'employé</TableHeadItem>
@@ -30,7 +45,7 @@
                         <template v-if="absences.data && absences.data.length > 0">
                         <TableRow v-for="absence in absences.data" :key="absence.id" >
                             <TableRowItem>
-                                <div class="text-gray-600">{{ getNameById(employees, absence.employee_id) }}</div>
+                                <div class="text-gray-600">{{ objectFinder(employees, absence.employee_id).employee_number }}</div>
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="text-gray-600">{{ objectFinder(employees, absence.employee_id).first_name }}</div>
