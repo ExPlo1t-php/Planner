@@ -16,6 +16,8 @@
     import TextInput from '@/Components/TextInput.vue';
     import SearchBar from '@/Components/Form/SearchBar.vue';
     import DateInput from '@/Components/Form/DateInput.vue';
+    
+    import { format } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, usePage } from '@inertiajs/vue3';
@@ -138,7 +140,7 @@
                                     {{ vehicle.registration_number }}
                                 </TableRowItem>
                                 <TableRowItem>
-                                    {{ vehicle.entree_date }}
+                                    {{ format(vehicle.entree_date) }}
                                 </TableRowItem>
                                 <TableRowItem>
                                     <div class="flex justify-center gap-4">

@@ -9,6 +9,8 @@
     // Others
     import { ref, toRefs, watch } from 'vue';
     import { Head, useForm, Link, router } from '@inertiajs/vue3';
+    import { getNameById, getDepartmentPositions, getPositions } from '@/utils';
+
     const { employee, leaders, departments, projects, positions, stations, teams, terminals, stationsFM, teamsFM } = toRefs(props);
     const props = defineProps(['employee', 'leaders', 'departments', 'projects', 'positions', 'stations', 'teams', 'terminals', 'stationsFM', 'teamsFM'])
     // Initialize the form with retrieved data
@@ -35,6 +37,7 @@
     // form filtering
     const reset = () => {
         form.project_id=null;
+        form.position_id=null;
         form.station_id=null;
         form.team_id=null;
     };
@@ -53,7 +56,6 @@
     // department filter
     watch(() => form.position_id,
     (value) =>{
-        reset()
         positionId = value;
         // console.log(positionId)
         if(positionId){
@@ -65,32 +67,7 @@
         reset()
     }
     )
-    // ------------------------
-    const getNameById = (object, id) => {
-        if(id!== null){
-            const foundObject = object.find(obj => obj.id == id);
-            if(foundObject){
-                if (foundObject.name){
-                    return foundObject ? foundObject.name : null;
-                }else{
-                    return foundObject ? foundObject.first_name : null;
-                }
-            } 
-        }
-    }
-    const getDepartmentPositions = (departments, id)=>{
-        // this  method fetches the  positions  available   in  the selected department 
-        const department = departments.find(department => department.id == id);
-        return JSON.parse(department.positions)
-    }
-    const getPositions = (positions, departmentPos) => {
-        // this  method takes an array of department positions from "getDepartmentPositions"
-        // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
-        const filteredData = positions.filter(object =>
-        departmentPos.includes(object.id)
-        );
-        return filteredData
-    }
+
 </script>
 
 <template>
@@ -162,24 +139,6 @@
 
                     <InputError class="mt-2" :message="form.errors.department_id" />
                 </div>
-                <div v-if="getNameById(departments, form.department_id) == 'assembly'">
-                    <InputLabel for="project_id" value="Projet " />
-
-                    <SelectInput
-                        id="project_id"
-                        class="mt-1 block w-full"
-                        v-model="form.project_id"
-                        required
-                        autofocus
-                    >
-                    <option selected disabled hidden value="">Choisir un Projet</option>
-                        <template v-for="project in projects">
-                            <option :value="project.id">{{ project.name }}</option>
-                        </template>
-                    </SelectInput>
-
-                    <InputError class="mt-2" :message="form.errors.project_id" />
-                </div>
                 <div>
                     <InputLabel for="position_id" value="Position" />
 
@@ -204,7 +163,25 @@
 
                     <InputError class="mt-2" :message="form.errors.position_id" />
                 </div>
-                <div v-if="getNameById(departments, form.department_id) == 'assembly' || getNameById(departments, form.department_id) == 'pre assembly'">
+                <div v-if="form.department_id == 2">
+                    <InputLabel for="project_id" value="Projet " />
+
+                    <SelectInput
+                        id="project_id"
+                        class="mt-1 block w-full"
+                        v-model="form.project_id"
+                        required
+                        autofocus
+                    >
+                    <option selected disabled hidden value="">Choisir un Projet</option>
+                        <template v-for="project in projects">
+                            <option :value="project.id">{{ project.name }}</option>
+                        </template>
+                    </SelectInput>
+
+                    <InputError class="mt-2" :message="form.errors.project_id" />
+                </div>
+                <div v-if="form.department_id == 2 && form.position_id == 1 || form.department_id == 1 && form.position_id == 1">
                     <InputLabel for="station_id" value="Station " />
 
                     <SelectInput
@@ -245,7 +222,7 @@
 
                     <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                 </div>
-                <div v-if="getNameById(departments, form.department_id) == 'assembly' || getNameById(departments, form.department_id) == 'pre assembly'">
+                <div v-if="form.department_id == 2 || form.department_id == 1">
                     <InputLabel for="team_id" value="Team" />
 
                     <SelectInput

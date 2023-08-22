@@ -91,13 +91,13 @@
     //  filter reset
     const reset = () => {
         form.project_id=null;
+        form.position_id=null;
         form.station_id=null;
         form.team_id=null;
     };
     // department filter
     watch(() => form.position_id,
     (value) =>{
-        reset()
         positionId = value;
         // console.log(positionId)
         if(positionId){
@@ -262,24 +262,6 @@
                             
                             <InputError class="mt-2" :message="form.errors.department_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly'">
-                            <InputLabel for="project_id" value="Projet " />
-
-                            <SelectInput
-                                id="project_id"
-                                class="mt-1 block w-full"
-                                v-model="form.project_id"
-                                autofocus
-                            >
-                            <option :value="null">Aucun Projet</option>
-                            <option selected disabled hidden value="">Choisir un Projet</option>
-                                <template v-for="project in projects">
-                                    <option :value="project.id">{{ project.name }}</option>
-                                </template>
-                            </SelectInput>
-
-                            <InputError class="mt-2" :message="form.errors.project_id" />
-                        </div>
                         <div>
                             <InputLabel for="position_id" value="Position" />
 
@@ -304,7 +286,25 @@
 
                             <InputError class="mt-2" :message="form.errors.position_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly' || this.getNameById(departments, form.department_id) == 'pre assembly'">
+                        <div v-if="form.department_id == 2">
+                            <InputLabel for="project_id" value="Projet " />
+
+                            <SelectInput
+                                id="project_id"
+                                class="mt-1 block w-full"
+                                v-model="form.project_id"
+                                autofocus
+                            >
+                            <option :value="null">Aucun Projet</option>
+                            <option selected disabled hidden value="">Choisir un Projet</option>
+                                <template v-for="project in projects">
+                                    <option :value="project.id">{{ project.name }}</option>
+                                </template>
+                            </SelectInput>
+
+                            <InputError class="mt-2" :message="form.errors.project_id" />
+                        </div>
+                        <div v-if="form.department_id == 2 || form.department_id == 1 && form.position_id == 1">
                             <InputLabel for="station_id" value="Workstation " />
                             
                             <SelectInput
@@ -344,7 +344,7 @@
 
                             <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                         </div>
-                        <div v-if="this.getNameById(departments, form.department_id) == 'assembly' || this.getNameById(departments, form.department_id) == 'pre assembly'">
+                        <div v-if="form.department_id == 2 || form.department_id == 1">
                             <InputLabel for="team_id" value="Team" />
                             
                             <SelectInput
@@ -428,17 +428,17 @@
                                 <div class="text-gray-600">{{ employee.last_name }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(departments, employee.department_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(departments, employee.department_id) }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(projects, employee.project_id ) }}</div>
+                                <div class="text-gray-600">{{ getNameById(projects, employee.project_id ) }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ this.getNameById(positions, employee.position_id) }}</div>
+                                <div class="text-gray-600">{{ getNameById(positions, employee.position_id) }}</div>
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.station_id">
-                                    {{ this.getNameById(stations, employee.station_id) }}
+                                    {{ getNameById(stations, employee.station_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">N/A</div>
@@ -446,7 +446,7 @@
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.team_leader_manager_id">
-                                    {{ this.getNameById(leaders, employee.team_leader_manager_id) }}
+                                    {{ getNameById(leaders, employee.team_leader_manager_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">N/A</div>
@@ -454,7 +454,7 @@
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.team_id">
-                                    {{ this.getNameById(teams, employee.team_id) }}
+                                    {{ getNameById(teams, employee.team_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">N/A</div>
@@ -462,7 +462,7 @@
                             </TableRowItem>
                             <TableRowItem>
                                 <template v-if="employee.terminal_id">
-                                    {{ this.getNameById(terminals, employee.terminal_id) }}
+                                    {{ getNameById(terminals, employee.terminal_id) }}
                                 </template>
                                 <template v-else>
                                     <div class="text-red-400">N/A</div>

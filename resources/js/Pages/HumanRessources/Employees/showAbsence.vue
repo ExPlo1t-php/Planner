@@ -7,11 +7,9 @@
     import TableRowItem from '@/Components/Table/TableRowItem.vue';
     import TableRow from '@/Components/Table/TableRow.vue';
     import Pagination from '@/Components/Table/Pagination.vue';
-    import { getNameById, objectFinder, checkDateValidity, getValiditySvg } from '@/utils';
-    import SearchBar from '@/Components/Form/SearchBar.vue';
+    import { getNameById, objectFinder, checkDateValidity, getValiditySvg, format, timeDiff } from '@/utils';
     import { ref, watch } from 'vue'
     import { router, usePage } from '@inertiajs/vue3';
-
     // search
     const { props } = usePage();
     let search = ref(props.filters.search||null);
@@ -39,6 +37,7 @@
                         <TableHeadItem>Motif</TableHeadItem>
                         <TableHeadItem>Date debut</TableHeadItem>
                         <TableHeadItem>Date fin</TableHeadItem>
+                        <TableHeadItem>Duree</TableHeadItem>
                         <TableHeadItem>validite</TableHeadItem>
                     </TableHead>
                     <TableBody>
@@ -62,10 +61,13 @@
                                 </template>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ absence.start_date }}</div>
+                                <div class="text-gray-600">{{ format(absence.start_date) }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ absence.end_date }}</div>
+                                <div class="text-gray-600">{{ format(absence.end_date) }}</div>
+                            </TableRowItem>
+                            <TableRowItem>
+                                <div class="text-gray-600">{{ timeDiff(absence.start_date, absence.end_date) }}</div>
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="" v-html="getValiditySvg(checkDateValidity(absence.end_date))"></div>
@@ -93,6 +95,7 @@
             absences: Array,
             employees: Array,
         },
+
         components: { Pagination },
     }
 </script>

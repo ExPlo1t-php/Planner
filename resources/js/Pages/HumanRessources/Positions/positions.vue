@@ -69,7 +69,7 @@
                     <template #body>
                         <form @submit.prevent="submit">
                         <div>
-                            <InputLabel for="name" value="Nom de Projet" />
+                            <InputLabel for="name" value="Nom de Position" />
 
                             <TextInput
                                 id="name"

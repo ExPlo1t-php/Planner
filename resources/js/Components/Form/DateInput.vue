@@ -5,19 +5,23 @@
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       ref="input"
-      min='2022-01-01'
     />
   </template>
   
   <script setup>
   import { onMounted, ref } from 'vue';
-  
+  import moment from 'moment';
+
   defineProps({
     modelValue: {
       type: String,
       required: true,
     },
   });
+
+  const format = (value) => {
+      return moment(value).format('DD-MM-YYYY');
+  }
   
   defineEmits(['update:modelValue']);
   

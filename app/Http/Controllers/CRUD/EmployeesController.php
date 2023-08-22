@@ -18,14 +18,6 @@ use Inertia\Inertia;
 
 class EmployeesController extends Controller
 {
-    public function getPositionById($query){
-        $positionFilter = Position::select('id', 'name')->find($query);
-        return $positionFilter;
-    }
-    public function getPositionByName($query){
-        $positionFilter = Position::select('id', 'name')->where('name', $query)->first();
-        return $positionFilter;
-    }
     public function index(Request $request){
         // filter query
         $query = Employee::query();
@@ -60,7 +52,7 @@ class EmployeesController extends Controller
             $position = $request->query('position');
             $query->where('position_id', $position);
         }
-        $items = $query->paginate(10)->withQueryString();
+        $items = $query->paginate(10);
         // end of employee filtering
         // filtering modal data -------------
         $filtered_teams = $teamsQ->get();
@@ -81,14 +73,13 @@ class EmployeesController extends Controller
         if ($request->has('positionM')){
             // fetching selected id from request
             $positionM = $request->query('positionM');
-            // fetching position id and name for comparison
-            $positionNameM =  $this->getPositionById($positionM)->name;
-            if($positionNameM == 'operator'){
-                $leadersQM->where('position_id', $this->getPositionByName('team leader')->id);
-            }elseif($positionNameM == 'team leader'){
-                $leadersQM->where('position_id', $this->getPositionByName('shift leader')->id);
+            // comparing id  to position 1=operator < 2=teamleader < 3=shiftleader < 4=manager
+            if($positionM == 1){
+                $leadersQM->where('position_id',2);
+            }elseif($positionM == 2){
+                $leadersQM->where('position_id', 3);
             }else{
-                $leadersQM->where('position_id', $this->getPositionByName('manager')->id);
+                $leadersQM->where('position_id', 4);
             }
         }
         $leaders = $leadersQM->select('id', 'first_name', 'last_name')->get();
@@ -187,13 +178,13 @@ class EmployeesController extends Controller
             // fetching selected id from request
             $positionM = $request->query('positionM');
             // fetching position id and name for comparison
-            $positionNameM =  $this->getPositionById($positionM)->name;
-            if($positionNameM == 'operator'){
-                $leadersQM->where('position_id', $this->getPositionByName('team leader')->id);
-            }elseif($positionNameM == 'team leader'){
-                $leadersQM->where('position_id', $this->getPositionByName('shift leader')->id);
+            // comparing id  to position 1=operator < 2=teamleader < 3=shiftleader < 4=manager
+            if($positionM == 1){
+                $leadersQM->where('position_id',2);
+            }elseif($positionM == 2){
+                $leadersQM->where('position_id', 3);
             }else{
-                $leadersQM->where('position_id', $this->getPositionByName('manager')->id);
+                $leadersQM->where('position_id', 4);
             }
         }
         $stationsQM = Station::query();
@@ -291,7 +282,7 @@ class EmployeesController extends Controller
         $item->start_date = $validatedData['start_date'];
         $item->end_date = $validatedData['end_date'];
         $item->save();
-        return to_route('employees.show_absence');
+        return to_route('employees.show_absences');
     }
 
     public function show_absences(Request $request){

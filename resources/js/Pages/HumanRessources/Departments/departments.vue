@@ -138,7 +138,7 @@
                                 {{ department.info }}
                             </TableRowItem>
                             <TableRowItem>
-                                {{  this.parseAndJoinPositions(department.positions) }}
+                                {{  parseAndJoinPositions(department.positions, positions) }}
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">

@@ -26,10 +26,10 @@
     <AuthenticatedLayout>
         <Head title="Project management"/>
         <div class="w-1/2 m-auto p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Mettre à jour le projet: {{ position.name }}</h3>
+            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Mettre à jour la position: {{ position.name }}</h3>
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="name" value="Nom de Projet" />
+                    <InputLabel for="name" value="Nom de Position" />
 
                     <TextInput
                         id="name"

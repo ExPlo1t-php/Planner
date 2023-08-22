@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function getNameById(object, id) {
 // Retrieves the name or first name from an object based on the provided ID.
     if(id!== null){
@@ -30,6 +32,7 @@ export function objectFinder(object, id){
     return foundObject;
 }
 
+//  dates=====================================
 export function checkDateValidity(date){
     const currentDate = new Date();
     const enteredDate = new Date(date);
@@ -45,6 +48,17 @@ export function checkDateValidity(date){
         return true;
     }
 }
+
+export function format (value) {
+    return moment(value).format('DD-MM-YYYY');
+}
+
+export function timeDiff(startDate, endDate){
+    const diff = moment(endDate).diff(moment(startDate))
+    const duration = moment.duration(diff)
+    return duration.days()
+}
+// ===========================================
 
 export function getValiditySvg(bool){
     if(bool){
@@ -63,16 +77,16 @@ export function getValiditySvg(bool){
                 </svg>`
     }
 }
-/* ------------------------------------------------------------------------------ */
-export function parseAndJoinPositions(positionsString){
+/* ========================================================================== */
+export function parseAndJoinPositions(positionsString, positions){
     try {
         const namesArray = []
         const positionsArray = JSON.parse(positionsString);
         
-        positionsArray.forEach(id => {
+        positionsArray.forEach(function (id) {
             if (id) {
                 // console.log(id)
-                const name = getNameById(this.positions, id);
+                const name = getNameById(positions, id);
                 namesArray.push(name);
             }
         });
@@ -81,22 +95,33 @@ export function parseAndJoinPositions(positionsString){
         console.error('Error parsing positions:', error);
     }
 }
-/* ------------------------------------------------------------------------------ */
+/* ========================================================================== */
 
-/* ------------------------------------------------------------------------------ */
+/* ========================================================================== */
 export function getDepartmentPositions(departments, id){
     // this  method fetches the  positions  available   in  the selected department
-    if(id!=null){
+    if(id!=null && departments){
         const department = departments.find(department => department.id == id);
-        return JSON.parse(department.positions)
+        console.log(department)
+        if (department) {
+            return JSON.parse(department.positions)
+        } else {
+            return null
+        }
+    }
     } 
-}
+    
 export function getPositions(positions, departmentPos){
     // this  method takes an array of department positions from "getDepartmentPositions"
     // then it fetches the positions based on the name key provided  in the getDepartmentPositions array
-    const filteredData = positions.filter(object =>
-    departmentPos.includes(object.id)
-    );
-    return filteredData
+    if (departmentPos) {
+        const filteredData = positions.filter(object =>
+        departmentPos.includes(object.id)
+        );
+        return filteredData
+    } else {
+        return null
+    }
 }
-/* ------------------------------------------------------------------------------ */
+/* ========================================================================== */
+
