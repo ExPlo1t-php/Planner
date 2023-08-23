@@ -18,7 +18,7 @@ class DriversController extends Controller
                 $drivers = Driver::where('first_name', 'LIKE', "%{$search}%")
                 ->orWhere('last_name', 'LIKE', "%{$search}%")
                 ->orWhere('vehicle_number', 'LIKE', "%{$search}%")
-                ->paginate(10);
+                ->paginate(10)->withquerystring();
             }else{
                 $drivers = Driver::paginate(10);
             }

@@ -17,7 +17,7 @@ class TeamsController extends Controller
         if($search){
             $items = Team::where('name', 'LIKE', "%{$search}%")
             ->orWhere('shift', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $items = Team::paginate(10);
         }

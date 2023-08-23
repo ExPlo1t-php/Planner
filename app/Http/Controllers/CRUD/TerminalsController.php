@@ -19,7 +19,7 @@ class TerminalsController extends Controller
             ->orWhere('address', 'LIKE', "%{$search}%")
             ->orWhere('trajet', 'LIKE', "%{$search}%")
             ->orWhere('vehicle_number', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $terminals = Terminal::paginate(10);
         }

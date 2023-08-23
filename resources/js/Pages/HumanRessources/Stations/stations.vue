@@ -15,7 +15,7 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     import SelectInput from '@/Components/Form/SelectInput.vue';
-    import SearchBar from '@/Components/Form/SearchBar.vue';
+    import { getNameById } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
@@ -168,16 +168,6 @@ export default {
     },
     components: { DeleteLink, Link, Pagination },
     methods: {
-        getNameById(object, id) {
-            if(id!== null){
-                const foundObject = object.find(obj => obj.id === id);
-                if (foundObject.name){
-                    return foundObject ? foundObject.name : null;
-                }else{
-                    return foundObject ? foundObject.first_name : null;
-                }
-            }
-        },
         // table sort
         sortTable(collection, key) {
             if (this.sortKey === key) {

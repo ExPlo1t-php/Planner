@@ -14,7 +14,6 @@
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
-    import SearchBar from '@/Components/Form/SearchBar.vue';
     import DateInput from '@/Components/Form/DateInput.vue';
     
     import { format } from '@/utils';

@@ -52,7 +52,7 @@ class EmployeesController extends Controller
             $position = $request->query('position');
             $query->where('position_id', $position);
         }
-        $items = $query->paginate(10);
+        $items = $query->paginate(10)->withquerystring();
         // end of employee filtering
         // filtering modal data -------------
         $filtered_teams = $teamsQ->get();
@@ -298,7 +298,8 @@ class EmployeesController extends Controller
             }
             $query->orWhere('reason', 'Like', "%{$search}%");
         }
-        $items = $query->paginate(10);
+        // withquerystrings works even if it looks erroneous
+        $items = $query->paginate(10)->withquerystring();
         $filters = $request->all();  
         return Inertia::render('HumanRessources/Employees/showAbsence', 
         [

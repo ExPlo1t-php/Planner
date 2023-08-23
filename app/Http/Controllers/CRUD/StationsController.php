@@ -16,7 +16,7 @@ class StationsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Station::where('name', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $items = Station::paginate(10);
         }

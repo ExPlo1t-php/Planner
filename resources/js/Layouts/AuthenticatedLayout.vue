@@ -38,6 +38,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
+                                <NavLink :href="route('HR.index')" :active="route().current('HR.index')">
+                                    HR Planning
+                                </NavLink>
                             </div>
                         </div>
 
@@ -77,7 +80,7 @@ const showingNavigationDropdown = ref(false);
                                     </template>
                                 </Dropdown>
                                 <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
-                                    <AccordionLink link="users.index">
+                                    <AccordionLink link="users.index" v-if="role == 'administrator' || role == 'admin' ">
                                         Gestion Des Utilisateurs
                                     </AccordionLink>
                                     <Accordion v-if="role == 'administrator' || role == 'admin' ">
@@ -167,6 +170,9 @@ const showingNavigationDropdown = ref(false);
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('HR.index')" :active="route().current('HR.index')">
+                            HR Planning
                         </ResponsiveNavLink>
                     </div>
 

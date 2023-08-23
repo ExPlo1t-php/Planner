@@ -19,7 +19,7 @@ class VehiclesController extends Controller
             $vehicles = Vehicle::where('registration_number', 'LIKE', "%{$search}%")
             ->orWhere('entree_date', 'LIKE', "%{$search}%")
             ->orWhere('bus_number', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $vehicles = Vehicle::paginate(10);
         }

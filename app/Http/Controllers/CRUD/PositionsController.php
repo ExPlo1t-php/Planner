@@ -15,7 +15,7 @@ class PositionsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Position::where('name', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $items = Position::paginate(10);
         }

@@ -25,6 +25,6 @@
         "flowbite-vue": "^0.0.16",
         "moment": "^2.29.4",
         "nprogress": "^0.2.0",
-        "vuedraggable": "^2.24.3"
+        "vuedraggable": "^4.1.0"
     }
 }

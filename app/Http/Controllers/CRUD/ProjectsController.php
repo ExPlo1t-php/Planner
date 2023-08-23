@@ -15,7 +15,7 @@ class ProjectsController extends Controller
         // validating if the $search variable is not empty
         if($search){
             $items = Project::where('name', 'LIKE', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $items = Project::paginate(10);
         }

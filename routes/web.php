@@ -10,6 +10,7 @@ use App\Http\Controllers\CRUD\VehiclesController;
 use App\Http\Controllers\CRUD\ProjectsController;
 use App\Http\Controllers\CRUD\StationsController;
 use App\Http\Controllers\CRUD\TeamsController;
+use App\Http\Controllers\HRController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Plannings
+    Route::group(['prefix'=>'HR'], function(){
+        Route::get('index', [HRController::class, 'index'])->name('HR.index');
+    });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -19,7 +19,7 @@ class DepartmentsController extends Controller
         if($search){
             $items = Department::where('name', 'LIKE', "%{$search}%")
             ->orWhere('info', 'Like', "%{$search}%")
-            ->paginate(10);
+            ->paginate(10)->withquerystring();
         }else{
             $items = Department::paginate(10);
         }
