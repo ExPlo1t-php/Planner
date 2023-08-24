@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // CRUD routes----------------------------------------------------------
     // Users 
-    Route::group(['prefix'=>'users', 'middleware'=> 'check.role:administrator,admin'],function () {
+    Route::group(['prefix'=>'users', 'middleware'=> 'check.role:administrator'],function () {
         Route::get('index', [UsersController::class, 'index'])->name('users.index');
         Route::post('create', [UsersController::class, 'create'])->name('users.create');
         Route::delete('destroy/{id}', [UsersController::class, 'destroy'])->name('users.destroy');

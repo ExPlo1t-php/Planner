@@ -12,6 +12,7 @@ use App\Models\Station;
 use App\Models\Team;
 use App\Models\Terminal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -136,6 +137,7 @@ class EmployeesController extends Controller
             $imageName = null; // Setting the path to null if no image is uploaded
         }
         // creating data
+        $userRole = Auth::user()->role;
         $item = new Employee();
         $item->employee_number = $validatedData['employee_number'];
         $item->first_name = $validatedData['first_name'];
@@ -147,6 +149,7 @@ class EmployeesController extends Controller
         $item->team_leader_manager_id = $validatedData['team_leader_manager_id'];
         $item->team_id = $validatedData['team_id'];
         $item->terminal_id = $validatedData['terminal_id'];
+        $item->user_role = $userRole;
         $item->photo = $imageName;
         $item->save();
         // returning updated data to the form
@@ -244,6 +247,9 @@ class EmployeesController extends Controller
         }
         // fetching/updating data
         $item = Employee::find($id);
+        if($request->has('user_role')){
+            $item->user_role = $request->input('user_role');
+        }
         $item->employee_number = $validatedData['employee_number'];
         $item->first_name = $validatedData['first_name'];
         $item->last_name = $validatedData['last_name'];

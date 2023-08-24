@@ -80,51 +80,56 @@ const showingNavigationDropdown = ref(false);
                                     </template>
                                 </Dropdown>
                                 <Sidebar :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebarState">
-                                    <AccordionLink link="users.index" v-if="role == 'administrator' || role == 'admin' ">
-                                        Gestion Des Utilisateurs
-                                    </AccordionLink>
-                                    <Accordion v-if="role == 'administrator' || role == 'admin' ">
+                                    <Accordion :always-open="false">
+                                        <accordion-panel :always-open="false">
+                                            <accordion-header class="bg-white">Gestion Des Employés</accordion-header>
+                                            <accordion-content>
+                                                <AccordionLink link="teams.index">
+                                                    Gestion Des Teams
+                                                </AccordionLink>
+                                                <AccordionLink link="employees.index">
+                                                    Gestion Des Employés
+                                                </AccordionLink>
+                                                <AccordionLink link="employees.show_absences">
+                                                    Gestion Des Absences
+                                                </AccordionLink>
+                                            </accordion-content>
+                                        </accordion-panel>
                                         <accordion-panel>
-                                                <accordion-header class="bg-white">Ressources humaines</accordion-header>
-                                                <accordion-content>
-                                                    <AccordionLink link="projects.index">
-                                                        Gestion Des Projets
-                                                    </AccordionLink>
-                                                    <AccordionLink link="positions.index">
-                                                        Gestion Des Positions
-                                                    </AccordionLink>
-                                                    <AccordionLink link="teams.index">
-                                                        Gestion Des Teams
-                                                    </AccordionLink>
-                                                    <AccordionLink link="stations.index">
-                                                        Gestion Des Stations
-                                                    </AccordionLink>
-                                                    <AccordionLink link="departments.index">
-                                                        Gestion Des Departments
-                                                    </AccordionLink>
-                                                    <AccordionLink link="employees.index">
-                                                        Gestion Des Employés
-                                                    </AccordionLink>
-                                                    <AccordionLink link="employees.show_absences">
-                                                        Gestion Des Absences
-                                                    </AccordionLink>
-                                                </accordion-content>
-                                            </accordion-panel>
-                                            <accordion-panel>
-                                                <accordion-header class="bg-white">Transport</accordion-header>
-                                                <accordion-content>
-                                                    <AccordionLink link="vehicles.index">
-                                                        Gestion Des Vehicules
-                                                    </AccordionLink>
-                                                    <AccordionLink link="drivers.index">
-                                                        Gestion Des Drivers
-                                                    </AccordionLink>
-                                                    <AccordionLink link="terminals.index">
-                                                        Gestion Des Terminals
-                                                    </AccordionLink>
-                                                </accordion-content>
-                                            </accordion-panel>
-                                        </Accordion>
+                                            <accordion-header class="bg-white">Transport</accordion-header>
+                                            <accordion-content>
+                                                <AccordionLink link="vehicles.index">
+                                                    Gestion Des Vehicules
+                                                </AccordionLink>
+                                                <AccordionLink link="drivers.index">
+                                                    Gestion Des Drivers
+                                                </AccordionLink>
+                                                <AccordionLink link="terminals.index">
+                                                    Gestion Des Terminals
+                                                </AccordionLink>
+                                            </accordion-content>
+                                        </accordion-panel>
+                                        <accordion-panel>
+                                            <accordion-header class="bg-white">Admin</accordion-header>
+                                            <accordion-content>
+                                                <AccordionLink link="users.index" v-if="role == 'administrator'">
+                                                    Gestion Des Utilisateurs
+                                                </AccordionLink>
+                                                <AccordionLink link="projects.index">
+                                                    Gestion Des Projets
+                                                </AccordionLink>
+                                                <AccordionLink link="positions.index">
+                                                    Gestion Des Positions
+                                                </AccordionLink>
+                                                <AccordionLink link="stations.index">
+                                                    Gestion Des Stations
+                                                </AccordionLink>
+                                                <AccordionLink link="departments.index">
+                                                    Gestion Des Departments
+                                                </AccordionLink>
+                                            </accordion-content>
+                                        </accordion-panel>
+                                    </Accordion>
                                 </Sidebar>
                             </div>
                         </div>

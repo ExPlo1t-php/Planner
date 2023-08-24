@@ -39,6 +39,7 @@
     }
     // search
     const { props } = usePage();
+    const role = props.auth.user.role
     let search = ref(props.filters.search||null);
         watch(search, value=>{
     router.get(route('drivers.index'), { search: value }, { preserveState: true});
@@ -59,7 +60,7 @@
                         placeholder="Recherche"
                         v-model="search"
                         >
-                    <button  @click="showModal" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                    <button  @click="showModal"  v-if="role == 'administrator' || role == 'HR'" class="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                         Ajouter un nouvel chauffeur
                     </button>
                 </div>  
@@ -144,8 +145,8 @@
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
-                                    <EditLink :uid="driver.id" :item="'drivers'"/>
-                                    <DeleteLink :uid="driver.id" :item="'drivers'"/>
+                                    <EditLink :uid="driver.id" v-if="role == 'administrator' || role == 'HR'" :item="'drivers'"/>
+                                    <DeleteLink :uid="driver.id" v-if="role == 'administrator' || role == 'HR'" :item="'drivers'"/>
                                 </div>
                             </TableRowItem>
                         </TableRow>

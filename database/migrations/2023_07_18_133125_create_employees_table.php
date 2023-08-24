@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('team_leader_manager_id')->nullable();
             $table->unsignedBigInteger('team_id')->nullable();
             $table->unsignedBigInteger('terminal_id')->nullable();
+            $table->string('user_role');
             $table->timestamps();
             //
             $table->foreign('department_id')

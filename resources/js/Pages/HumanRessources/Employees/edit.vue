@@ -8,7 +8,7 @@
     import { FileInput } from 'flowbite-vue';
     // Others
     import { ref, toRefs, watch } from 'vue';
-    import { Head, useForm, Link, router } from '@inertiajs/vue3';
+    import { Head, useForm, Link, router, usePage } from '@inertiajs/vue3';
     import { getNameById, getDepartmentPositions, getPositions } from '@/utils';
 
     const { employee, leaders, departments, projects, positions, stations, teams, terminals, stationsFM, teamsFM } = toRefs(props);
@@ -27,6 +27,7 @@
         team_id: employee.value.team_id,
         terminal_id: employee.value.terminal_id,
         photo: employee.value.photo,
+        user_role: employee.value.user_role,
     })
     // submitting form data
     const submit = () => {
@@ -268,6 +269,24 @@
                     </FileInput>
 
                     <InputError class="mt-2" :message="form.errors.photo" />
+                </div>
+                <div v-if="employee.user_role == 'administrator'">
+                    <InputLabel for="user_role" value="Role" />
+
+                    <SelectInput
+                        id="user_role"
+                        class="mt-1 block w-full"
+                        v-model="form.user_role"
+                        required
+                        autofocus
+                    >
+                    <option value="administrator">Administrateur</option>
+                    <option value="assembly">Éditeur d'assemblage</option>
+                    <option value="injection">Éditeur d'injection </option>
+                    <option value="HR">Ressources Humaines </option>
+                    </SelectInput>
+
+                    <InputError class="mt-2" :message="form.errors.user_role" />
                 </div>
                 <div class="flex ">
                     <button type="submit" class="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm mt-4 px-5 py-2.5 text-center">Mettre à jour</button>

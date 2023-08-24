@@ -15,6 +15,21 @@ const role = props.auth.user.role
         <div v-if="$page.props.flash.message" class="bg-red-100 border border-red-400 text-red-700 w-1/2 self-center px-4 py-3 m-auto rounded relative" role="alert">
             <strong class="font-bold">{{ $page.props.flash.message }}!</strong>
         </div>
+
+        <section class="bg-white dark:bg-gray-900">
+            <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Ressources humaines</h2>
+            <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2">
+                <Module link="teams.index">
+                    Gestion des Teams
+                </Module>
+                <Module link="employees.index">
+                    Gestion des Employés
+                </Module>
+                <Module link="employees.show_absences">
+                    Gestion des Absences
+                </Module>
+            </div>
+        </section>
         <section class="bg-white dark:bg-gray-900">
             <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Transport</h2>
             <div class="grid lg:grid-cols-4 md:grid-cols-3">
@@ -30,8 +45,8 @@ const role = props.auth.user.role
             </div>
         </section>
         <section class="bg-white dark:bg-gray-900">
-            <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Ressources humaines</h2>
-            <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2">
+            <h2 class="mx-6 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Admin</h2>
+            <div class="grid lg:grid-cols-4 md:grid-cols-3">
                 <Module v-if="role=='administrator'" link="users.index"> 
                     Gestion des Utilisateurs
                 </Module>
@@ -41,23 +56,14 @@ const role = props.auth.user.role
                 <Module link="positions.index">
                     Gestion des positions
                 </Module>
-                <Module link="teams.index">
-                    Gestion des Teams
-                </Module>
                 <Module link="stations.index">
                     Gestion des Stations
                 </Module>
                 <Module link="departments.index">
                     Gestion des Departments
                 </Module>
-                <Module link="employees.index">
-                    Gestion des Employés
-                </Module>
-                <Module link="employees.show_absences">
-                    Gestion des Absences
-                </Module>
             </div>
-            </section>
+        </section>
     </div>        
 </AuthenticatedLayout>
 </template>

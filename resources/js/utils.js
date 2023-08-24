@@ -95,6 +95,15 @@ export function parseAndJoinPositions(positionsString, positions){
         console.error('Error parsing positions:', error);
     }
 }
+
+export function  addObjectToArray(message, object) {
+// adds a null value object to an array of objects
+    const newObject = {
+        id: null,
+        name: message,
+    };
+    object.unshift(newObject)
+}
 /* ========================================================================== */
 
 /* ========================================================================== */
@@ -102,7 +111,7 @@ export function getDepartmentPositions(departments, id){
     // this  method fetches the  positions  available   in  the selected department
     if(id!=null && departments){
         const department = departments.find(department => department.id == id);
-        console.log(department)
+        // console.log(department)
         if (department) {
             return JSON.parse(department.positions)
         } else {

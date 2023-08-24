@@ -9,46 +9,14 @@ import TableRowItem from '@/Components/Table/TableRowItem.vue';
 import TableRow from '@/Components/Table/TableRow.vue';
 
 
-const {props} = defineProps(['items'])
+// const {props} = defineProps(['items'])
+
 </script>
 <template>
     <AuthenticatedLayout>
         <Head title="HR Planning"/>
         <div class="bg-white my-6 max-w-full m-auto mx-20 overflow-auto">
-            <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
-                <TableHead>
-                    <TableHeadItem class="w-10">
-                        Head
-                    </TableHeadItem>
-                    <template v-for="item in items">
-                        <TableHeadItem>
-                            {{ item.name }}
-                        </TableHeadItem>
-                    </template>
-                </TableHead>
-                <TableBody>
-<!-- ---------------------------------------------------------------------------------- -->
-                <draggable v-model="list" tag="tbody" item-key="name">
-                    <template #item="{ element }">
-                        <TableRow>
-                            <!-- side title -->
-                            <TableRowItem class="bg-gray-100 h-52 w-10">
-                                Pain
-                            </TableRowItem>
-                            <!-- side title -->
-                        <template v-for="item in items" >
-                            <template v-if="item.project_id == 3">
-                                <TableRowItem class="h-52 w-52 text-center border">
-                                    Pain{{ element.name }}
-                                </TableRowItem>
-                            </template>
-                        </template>
-                    </TableRow>
-                </template>
-                </draggable>
-                <!-- ---------------------------------------------------------------------------------- -->
-                </TableBody>
-            </table>
+            <GridStack :items="gridItems"/>
         </div>
         <!-- <rawDisplayer class="col-3" :value="list" title="List" /> -->
     </AuthenticatedLayout>
@@ -57,23 +25,25 @@ const {props} = defineProps(['items'])
 <script>
 // pain🥲⏬ 
 import draggable from 'vuedraggable/src/vuedraggable'
+import GridStack from '@/Pages/Plannings/GridStack.vue'
+// import 'gridstack/dist/gridstack.min.css';
+// import { GridStack } from 'gridstack';
     export default {
-        name: "table-example",
-        display: "Table",
-        order: 8,
-        components: {
-            draggable
+        props: {
+            items: Array,
         },
-    data() {
-        return {
-            list: [
-                { id: 1, name: "Abby", sport: "basket" },
-                { id: 2, name: "Brooke", sport: "foot" },
-                { id: 3, name: "Courtenay", sport: "volley" },
-                { id: 4, name: "David", sport: "rugby" }
+        components: {
+            GridStack
+        },
+        data() {
+            return {
+            gridItems: [
+                { id: 1, x: 0, y: 0, width: 120, height: 1, content: 'Item 12' },
+                { id: 2, x: 2, y: 0, width: 1, height: 1, content: 'Item 2' },
+                // Add more items here
             ],
-            dragging: false
-        }
+            };
+        },
+        
     }
-}
 </script>

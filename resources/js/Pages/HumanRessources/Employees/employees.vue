@@ -10,14 +10,17 @@
     import DeleteLink from '@/Components/Table/DeleteLink.vue';
     import AbsenceLink from '@/Components/Table/AbsenceLink.vue';
     import Pagination from '@/Components/Table/Pagination.vue';
+    import NotApplicable from '@/Components/Form/NotApplicable.vue';
     // Form items
     import { Modal, FileInput, Radio } from 'flowbite-vue';
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     import SelectInput from '@/Components/Form/SelectInput.vue';
+    import { ModelListSelect  } from 'vue-search-select'
+    import "vue-search-select/dist/VueSearchSelect.css"
     // functions
-    import { getNameById, getDepartmentPositions, getPositions } from '@/utils';
+    import { getNameById, getDepartmentPositions, getPositions, addObjectToArray } from '@/utils';
     // Others
     import { ref, watch } from 'vue'
     import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
@@ -49,6 +52,7 @@
     }
     
     const { props } = usePage();
+    const role = props.auth.user.role
     const option = ref('');
     let search = ref(props.filters.search||null);
     let department = ref(props.filters.department||null);
@@ -61,7 +65,6 @@
     watch(search, value => {
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null }), { preserveState: true });
     });
-    console.log(search)
     // filters
     watch(department, value => {
         router.visit(route('employees.index', { search: search.value||null, department: department.value||null, project: project.value||null, team: team.value||null, position: position.value||null
@@ -123,6 +126,7 @@
         projectId = null;
     };
     
+    addObjectToArray('select this you bastaaa', props.departments)
     
 </script>
 
@@ -246,78 +250,60 @@
                         <div>
                             <InputLabel for="department_id" value="Departement " />
                             
-                            <SelectInput
+                            <ModelListSelect
                                 id="department_id"
-                                class="mt-1 block w-full"
+                                :list="departments"
+                                optionValue="id"
+                                optionText="name"
                                 v-model="form.department_id"
-                                required
-                                autofocus
-                                >
-                            <option selected disabled hidden value="">Choisir une Departement</option>
-                            <option :value="null">Aucun Departement</option>
-                                <template v-for="department in departments">
-                                    <option :value="department.id">{{ department.name }}</option>
-                                </template>
-                            </SelectInput>
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Departement">
+                            </ModelListSelect>
                             
                             <InputError class="mt-2" :message="form.errors.department_id" />
                         </div>
                         <div>
                             <InputLabel for="position_id" value="Position" />
 
-                            <SelectInput
+                            <ModelListSelect
                                 id="position_id"
-                                class="mt-1 block w-full"
+                                :list="form.department_id ? getPositions(positions, getDepartmentPositions(departments, form.department_id)) : [{id: null,name: 'Aucun Position (veuillez choisir une departement)'}]"
+                                optionValue="id"
+                                optionText="name"
                                 v-model="form.position_id"
-                                required
-                                autofocus
-                            >
-                            <option selected disabled hidden value="">Choisir un Position</option>
-                            <template v-if="form.department_id">
-                                <template v-for="position in getPositions(positions, getDepartmentPositions(departments, form.department_id))">
-                                    <option :value="position.id">{{ position.name }}</option>
-                                </template>
-                            </template>
-                            <template v-else>
-                                <option value="" disabled>Aucun Position (veuillez choisir une departement)</option>
-                            </template>
-                            
-                            </SelectInput>
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Position">
+                            </ModelListSelect>
 
                             <InputError class="mt-2" :message="form.errors.position_id" />
                         </div>
                         <div v-if="form.department_id == 2">
                             <InputLabel for="project_id" value="Projet " />
 
-                            <SelectInput
+                            <ModelListSelect
                                 id="project_id"
-                                class="mt-1 block w-full"
+                                :list="projects"
+                                optionValue="id"
+                                optionText="name"
                                 v-model="form.project_id"
-                                autofocus
-                            >
-                            <option :value="null">Aucun Projet</option>
-                            <option selected disabled hidden value="">Choisir un Projet</option>
-                                <template v-for="project in projects">
-                                    <option :value="project.id">{{ project.name }}</option>
-                                </template>
-                            </SelectInput>
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Projet">
+                            </ModelListSelect>
 
                             <InputError class="mt-2" :message="form.errors.project_id" />
                         </div>
                         <div v-if="form.department_id == 2 || form.department_id == 1 && form.position_id == 1">
                             <InputLabel for="station_id" value="Workstation " />
                             
-                            <SelectInput
-                            id="station_id"
-                            class="mt-1 block w-full"
-                            v-model="form.station_id"
-                            autofocus
-                            >
-                            <option selected disabled hidden value="">Choisir un Workstation</option>
-                            <template v-for="station in stationsFM">
-                                <option :value="station.id">{{ station.name }}</option>
-                            </template>
-                        </SelectInput>
+                            <ModelListSelect
+                                id="station_id"
+                                :list="stationsFM"
+                                optionValue="id"
+                                optionText="name"
+                                v-model="form.station_id"
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Station">
+                            </ModelListSelect>
                         
                         <InputError class="mt-2" :message="form.errors.station_id" />
                         </div>
@@ -428,51 +414,34 @@
                                 <div class="text-gray-600">{{ employee.last_name }}</div>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ getNameById(departments, employee.department_id) }}</div>
+                                <NotApplicable :id="employee.project_id" :array="departments"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ getNameById(projects, employee.project_id ) }}</div>
+                                <NotApplicable :id="employee.project_id" :array="projects"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <div class="text-gray-600">{{ getNameById(positions, employee.position_id) }}</div>
+                                <NotApplicable :id="employee.position_id" :array="positions"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <template v-if="employee.station_id">
-                                    {{ getNameById(stations, employee.station_id) }}
-                                </template>
-                                <template v-else>
-                                    <div class="text-red-400">N/A</div>
-                                </template>
+                                <NotApplicable :id="employee.station_id" :array="stations"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <template v-if="employee.team_leader_manager_id">
-                                    {{ getNameById(leaders, employee.team_leader_manager_id) }}
-                                </template>
-                                <template v-else>
-                                    <div class="text-red-400">N/A</div>
-                                </template>
+                                <NotApplicable :id="employee.team_leader_manager_id" :array="leaders"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <template v-if="employee.team_id">
-                                    {{ getNameById(teams, employee.team_id) }}
-                                </template>
-                                <template v-else>
-                                    <div class="text-red-400">N/A</div>
-                                </template>
+                                <NotApplicable :id="employee.team_id" :array="teams"/>
                             </TableRowItem>
                             <TableRowItem>
-                                <template v-if="employee.terminal_id">
-                                    {{ getNameById(terminals, employee.terminal_id) }}
-                                </template>
-                                <template v-else>
-                                    <div class="text-red-400">N/A</div>
-                                </template>
+                                <NotApplicable :id="employee.terminal_id" :array="terminals"/>
                             </TableRowItem>
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
                                     <AbsenceLink :uid="employee.id" item="employees.new_absence"/>
-                                    <EditLink :uid="employee.id" :item="'employees'"/>
-                                    <template v-if="$page.props.auth.user.role == 'administrator'">
+                                    {{ employees.user_role }}
+                                    <template v-if="role == employees.user_role || role == 'administrator'">
+                                    <EditLink :uid="employee.id"  :item="'employees'"/>
+                                    </template>
+                                    <template v-if="role == 'administrator'">
                                         <DeleteLink :uid="employee.id" :item="'employees'"/>
                                     </template>
                                 </div>
@@ -540,7 +509,7 @@ export default {
                 employee_number: '',
                 first_name: '',
                 last_name: '',
-                department_id: '',
+                department_id: null,
                 project_id: '',
                 position_id: '',
                 station_id: '',
@@ -585,6 +554,6 @@ export default {
             return this.getSortedItems(this.employees.data);
         },
     },
-    components: { DeleteLink, Link, Pagination },
+    components: { DeleteLink, Link, Pagination,ModelListSelect },
 };
 </script>
