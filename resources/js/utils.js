@@ -101,6 +101,7 @@ export function  addObjectToArray(message, object) {
     const newObject = {
         id: null,
         name: message,
+        positions: [],
     };
     object.unshift(newObject)
 }

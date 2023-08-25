@@ -277,7 +277,7 @@
 
                             <InputError class="mt-2" :message="form.errors.position_id" />
                         </div>
-                        <div v-if="form.department_id == 2">
+                        <div v-if="form.position_id == 1">
                             <InputLabel for="project_id" value="Projet " />
 
                             <ModelListSelect
@@ -310,59 +310,46 @@
                         <div>
                             <InputLabel for="team_leader_manager_id" value="Team Leader/Manager" />
 
-                            <SelectInput
+
+                            <ModelListSelect
                                 id="team_leader_manager_id"
-                                class="mt-1 block w-full"
+                                :list="leaders"
+                                optionValue="id"
+                                optionText="first_name"
                                 v-model="form.team_leader_manager_id"
-                                autofocus
-                            >
-                            <option selected disabled hidden value="">Choisir un Team Leader/Manager</option>
-                            <option value="">Aucun Team Leader/Manager</option>
-                            <template v-if="leaders && leaders.length > 0">
-                                <template v-for="leader in leaders">
-                                    <option :value="leader.id">{{ leader.first_name }}</option>
-                                </template>
-                            </template>
-                            <template v-else>
-                                <option value="" disabled>Aucun Team Leader/Manager disponible</option>
-                            </template>
-                            </SelectInput>
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Team Leader/Shift Leader/Manager">
+                            </ModelListSelect>
 
                             <InputError class="mt-2" :message="form.errors.team_leader_manager_id" />
                         </div>
                         <div v-if="form.department_id == 2 || form.department_id == 1">
                             <InputLabel for="team_id" value="Team" />
                             
-                            <SelectInput
-                            id="team_id"
-                            class="mt-1 block w-full"
-                            v-model="form.team_id"
-                            autofocus
-                            >
-                                <option selected disabled hidden value="">Choisir un Team</option>
-                                <option value="">Aucun Team</option>
-                                <template v-for="team in teamsFM">
-                                    <option :value="team.id">{{ team.name }}</option>
-                                </template>
-                            </SelectInput>
+                            <ModelListSelect
+                                id="team_id"
+                                :list="teamsFM"
+                                optionValue="id"
+                                optionText="name"
+                                v-model="form.team_id"
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir un Team">
+                            </ModelListSelect>
                     
                             <InputError class="mt-2" :message="form.errors.team_id" />
                         </div>
                         <div>
                             <InputLabel for="terminal_id" value="Parada" />
 
-                            <SelectInput
+                            <ModelListSelect
                                 id="terminal_id"
-                                class="mt-1 block w-full"
+                                :list="terminals"
+                                optionValue="id"
+                                optionText="name"
                                 v-model="form.terminal_id"
-                                autofocus
-                            >
-                            <option selected disabled hidden value="">Choisir un Parada</option>
-                            <option value="">Aucun Parada</option>
-                                <template v-for="terminal in terminals">
-                                    <option :value="terminal.id">{{ terminal.name }}</option>
-                                </template>
-                            </SelectInput>
+                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                                placeholder="Choisir une Parada">
+                            </ModelListSelect>
 
                             <InputError class="mt-2" :message="form.errors.terminal_id" />
                         </div>
