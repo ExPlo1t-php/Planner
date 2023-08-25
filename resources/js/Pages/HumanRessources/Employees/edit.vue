@@ -14,6 +14,9 @@
 
     const { employee, leaders, departments, projects, positions, stations, teams, terminals, stationsFM, teamsFM } = toRefs(props);
     const props = defineProps(['employee', 'leaders', 'departments', 'projects', 'positions', 'stations', 'teams', 'terminals', 'stationsFM', 'teamsFM'])
+    const page = usePage(); // Add this line to use the usePage function
+    const role = page.props.auth.user.role; 
+
     // Initialize the form with retrieved data
     const form = useForm({
         id: employee.value.id,
@@ -70,7 +73,6 @@
     }
     )
 
-    addObjectToArray('null', props.departments)
 </script>
 
 <template>
@@ -243,21 +245,19 @@
 
                     <InputError class="mt-2" :message="form.errors.photo" />
                 </div>
-                <div v-if="employee.user_role == 'administrator'">
+                {{ employee.user_role }}
+                <div v-if="role == 'administrator'">
                     <InputLabel for="user_role" value="Role" />
-
-                    <SelectInput
+                    
+                    <ModelListSelect
                         id="user_role"
-                        class="mt-1 block w-full"
+                        :list="[{id:'adminstrator', name: 'Administrateur'}, {id:'assembly', name: 'Éditeur d\'assemblage'}, {id:'injection', name: 'Éditeur d\'injection'},{id:'HR', name: 'Ressources Humaines'}]"
+                        optionValue="id"
+                        optionText="name"
                         v-model="form.user_role"
-                        required
-                        autofocus
-                    >
-                    <option value="administrator">Administrateur</option>
-                    <option value="assembly">Éditeur d'assemblage</option>
-                    <option value="injection">Éditeur d'injection </option>
-                    <option value="HR">Ressources Humaines </option>
-                    </SelectInput>
+                        class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm"
+                        placeholder="Choisir une Role">
+                    </ModelListSelect>
 
                     <InputError class="mt-2" :message="form.errors.user_role" />
                 </div>

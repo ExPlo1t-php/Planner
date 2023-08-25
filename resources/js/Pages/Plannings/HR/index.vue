@@ -16,7 +16,7 @@ import TableRow from '@/Components/Table/TableRow.vue';
     <AuthenticatedLayout>
         <Head title="HR Planning"/>
         <div class="bg-white my-6 max-w-full m-auto mx-20 overflow-auto">
-            <GridStack :items="gridItems"/>
+            <GridStack :items="items"/>
         </div>
         <!-- <rawDisplayer class="col-3" :value="list" title="List" /> -->
     </AuthenticatedLayout>
@@ -34,15 +34,6 @@ import GridStack from '@/Pages/Plannings/GridStack.vue'
         },
         components: {
             GridStack
-        },
-        data() {
-            return {
-            gridItems: [
-                { id: 1, x: 0, y: 0, width: 120, height: 1, content: 'Item 12' },
-                { id: 2, x: 2, y: 0, width: 1, height: 1, content: 'Item 2' },
-                // Add more items here
-            ],
-            };
         },
         
     }

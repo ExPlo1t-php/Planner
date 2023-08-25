@@ -126,7 +126,15 @@
         projectId = null;
     };
     
-    addObjectToArray('select this you bastaaa', props.departments)
+    // adding empty options in case the user chose nothing
+    // not working properly since the objects are updated frequently
+    addObjectToArray('Aucun Department', props.departments)
+    addObjectToArray('Aucun Position', props.positions)
+    addObjectToArray('Aucun Projet', props.projects)
+    addObjectToArray('Aucun Workstation', props.stationsFM)
+    addObjectToArray('Aucun Leader', props.leaders)
+    addObjectToArray('Aucun Team', props.teamsFM)
+    addObjectToArray('Aucun Parade', props.terminals)
     
 </script>
 
@@ -267,7 +275,7 @@
 
                             <ModelListSelect
                                 id="position_id"
-                                :list="form.department_id ? getPositions(positions, getDepartmentPositions(departments, form.department_id)) : [{id: null,name: 'Aucun Position (veuillez choisir une departement)'}]"
+                                :list="form.department_id ? getPositions(positions, getDepartmentPositions(departments, form.department_id)) : [{id: '',name: 'Aucun Position (veuillez choisir une departement)'}]"
                                 optionValue="id"
                                 optionText="name"
                                 v-model="form.position_id"

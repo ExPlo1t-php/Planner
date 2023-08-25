@@ -58,7 +58,6 @@ export function timeDiff(startDate, endDate){
     const duration = moment.duration(diff)
     return duration.days()
 }
-// ===========================================
 
 export function getValiditySvg(bool){
     if(bool){
@@ -99,15 +98,13 @@ export function parseAndJoinPositions(positionsString, positions){
 export function  addObjectToArray(message, object) {
 // adds a null value object to an array of objects
     const newObject = {
-        id: null,
+        id: '',
         name: message,
         positions: [],
     };
     object.unshift(newObject)
 }
-/* ========================================================================== */
 
-/* ========================================================================== */
 export function getDepartmentPositions(departments, id){
     // this  method fetches the  positions  available   in  the selected department
     if(id!=null && departments){
@@ -119,7 +116,7 @@ export function getDepartmentPositions(departments, id){
             return null
         }
     }
-    } 
+} 
     
 export function getPositions(positions, departmentPos){
     // this  method takes an array of department positions from "getDepartmentPositions"
@@ -135,3 +132,29 @@ export function getPositions(positions, departmentPos){
 }
 /* ========================================================================== */
 
+
+/* ========================================================================== */
+    // accordion related functions
+// unused code (for now)
+export function toggleItem(itemId) {
+    const accordionState = JSON.parse(localStorage.getItem('accordionState')) || {};
+    accordionState[itemId] = accordionState[itemId] === 'open' ? 'closed' : 'open';
+    localStorage.setItem('accordionState', JSON.stringify(accordionState));
+}
+
+export function isAccordionOpen(itemId) {
+    const accordionState = JSON.parse(localStorage.getItem('accordionState'));
+    return accordionState && accordionState[itemId] === 'open';
+}
+
+export function loadAccordionState() {
+    const accordionState = JSON.parse(localStorage.getItem('accordionState'));
+    if (accordionState) {
+      Object.keys(accordionState).forEach((itemId) => {
+        const isOpen = accordionState[itemId] === 'open';
+        // Emit toggle event to update the state of each accordion item
+        this.$emit('toggle', { itemId, isOpen });
+      });
+    }
+}
+/* ========================================================================== */

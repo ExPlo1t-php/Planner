@@ -21,14 +21,21 @@
     </svg>
     <span class="sr-only">Close modal</span>
   </button>
-  <span @click="toggleSidebar" v-if="collapsed" class="text-white cursor-pointer p-2 bg-gray-800 h-full">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
-      </svg>
-    </span>
+  <div v-if="collapsed" class="text-white p-2 bg-gray-800 h-full">
+    <span @click="toggleSidebar" v-if="collapsed" class="cursor-pointer">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+      </span>
+      <template v-if="collapsed">
+        <div>
+          <slot name="collapsed"/>
+        </div>
+      </template>
+  </div>
     <template v-if="!collapsed">
       <div class="my-[3em]">
-        <slot/>
+        <slot name="notcollapsed"/>
       </div>
     </template>
   </section>

@@ -39,6 +39,7 @@
     }
     // search
     const { props } = usePage();
+    const role = props.auth.user.role
     let search = ref(props.filters.search||null);
     watch(search, value=>{
     router.get(route('teams.index'), { search: value }, { preserveState: true});
@@ -149,7 +150,9 @@
                             <TableRowItem>
                                 <div class="flex justify-center gap-4">
                                     <EditLink :uid="team.id" :item="'teams'"/>
-                                    <DeleteLink :uid="team.id" :item="'teams'"/>
+                                    <template v-if="role == 'administrator'">
+                                        <DeleteLink :uid="team.id" :item="'teams'"/>
+                                    </template>
                                 </div>
                             </TableRowItem>
                         </TableRow>
