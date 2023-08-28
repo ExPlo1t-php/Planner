@@ -29,7 +29,7 @@ export function getIdByName(object, name) {
 export function objectFinder(object, id){
     // searches for an object inside another object and return it
     const foundObject = object.find(obj => obj.id == id);
-    return foundObject;
+    console.log(foundObject);
 }
 
 //  dates=====================================
