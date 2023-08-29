@@ -300,7 +300,7 @@
 
                             <InputError class="mt-2" :message="form.errors.project_id" />
                         </div>
-                        <div v-if="form.department_id == 2 || form.department_id == 1 && form.position_id == 1">
+                        <div v-if="form.department_id == 2 && form.position_id == 1 || form.department_id == 1 && form.position_id == 1">
                             <InputLabel for="station_id" value="Workstation " />
                             
                             <ModelListSelect

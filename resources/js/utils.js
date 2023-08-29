@@ -1,4 +1,5 @@
 import moment from 'moment';
+import {ref} from 'vue'
 
 export function getNameById(object, id) {
 // Retrieves the name or first name from an object based on the provided ID.
@@ -29,7 +30,7 @@ export function getIdByName(object, name) {
 export function objectFinder(object, id){
     // searches for an object inside another object and return it
     const foundObject = object.find(obj => obj.id == id);
-    console.log(foundObject);
+    return foundObject;
 }
 
 //  dates=====================================

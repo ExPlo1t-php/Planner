@@ -14,7 +14,7 @@ const props = defineProps({
 const classes = computed(() =>
     props.active
         ? 'bg-red-700 transition duration-150 ease-in-out'
-        : 'border p-0 max-w-xs p-3 text-center bg-gray-800 hover:bg-gray-600 dark:bg-gray-800 cursor-pointer transition duration-150 ease-in-out'
+        : 'border p-0 max-w-md p-2 text-center bg-gray-800 hover:bg-gray-600 dark:bg-gray-800 cursor-pointer transition duration-150 ease-in-out'
 );
 </script>
 <template>
