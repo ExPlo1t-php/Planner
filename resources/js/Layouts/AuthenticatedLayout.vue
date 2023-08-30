@@ -154,8 +154,8 @@ const showingNavigationDropdown = ref(false);
                                                 </AccordionLink>
                                             </template>
                                         </Accordion>
-                                        <AccordionLink link="departments.index">
-                                            FAQ (Questions fréquemment posées)
+                                        <AccordionLink link="help.index">
+                                            Aide
                                         </AccordionLink>
                                     </template>
                                 </Sidebar>

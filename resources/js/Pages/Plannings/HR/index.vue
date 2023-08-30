@@ -1,95 +1,184 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { Head } from '@inertiajs/inertia-vue3';
-import { objectFinder } from '@/utils';
-import { Modal } from 'flowbite-vue'
-import { ref } from 'vue'
+import { objectFinder,
+    getWeekNumber,
+    getCurrentYear,
+    addDepartment,
+    getNameById, getDepartmentPositions, getPositions, addObjectToArray  } from '@/utils';
+import Modal from '@/Components/Modal.vue';
+import { ref, watch } from 'vue'
+import { Head, useForm, router, Link, usePage } from '@inertiajs/vue3';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 // table items
 import TableHead from '@/Components/Table/TableHead.vue';
 import TableBody from '@/Components/Table/TableBody.vue';
 import TableHeadItem from '@/Components/Table/TableHeadItem.vue';
 import TableRowItem from '@/Components/Table/TableRowItem.vue';
 import TableRow from '@/Components/Table/TableRow.vue';
+// Form items
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import DateInput from '@/Components/Form/DateInput.vue';
+import SelectInput from '@/Components/Form/SelectInput.vue';
+import { MultiSelect, ModelListSelect } from 'vue-search-select'
+import "vue-search-select/dist/VueSearchSelect.css"
+// messages
+import Error from '@/Components/Messages/Error.vue' 
+const form = useForm({
+    start_date: '',
+    end_date: '',
+    year: getCurrentYear(),
+    week_number: getWeekNumber(),
+    week_details: {}
+})
 
-const isShowModal = ref(false)
-function closeModal() {
-  isShowModal.value = false
-}
-function showModal() {
-  isShowModal.value = true
-}
+// form
+const department = ref('')
+// form states
+const dep_state = ref(false)
+
+const days = ['MON','TUE','WED','THU','FRI'];
 </script>
 <template>
     <AuthenticatedLayout>
         <Head title="HR Planning"/>
         <div class="bg-white my-6 max-w-full m-auto mx-20 overflow-auto">
-            <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
-                <TableHead>
-                    <TableHeadItem class="w-10">
-                    </TableHeadItem>
-                    <TableHeadItem class="w-10">
-                        Mon
-                    </TableHeadItem>
-                    <TableHeadItem class="w-10">
-                        Tue
-                    </TableHeadItem>
-                    <TableHeadItem class="w-10">
-                        Wed
-                    </TableHeadItem>
-                    <TableHeadItem class="w-10">
-                        Thu
-                    </TableHeadItem>
-                    <TableHeadItem class="w-10">
-                        Fri
-                    </TableHeadItem>
-                </TableHead>
-                <TableBody>
-                    <template v-for="item in items" >
-                        <template v-for="(row, rowId) in Jason(item)">
-                            <TableRow>
-                                <TableHeadItem class="bg-gray-100 h-52 w-10">
-                                    {{ rowId }}
-                                </TableHeadItem>
-                                <template v-for="day in ['MON','TUE','WED','THU','FRI']">
-                                    <TableRowItem>
-                                        <template v-for="employeeId in row[day].employees">
-                                    <div
-                                        class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1  rounded-full"
-                                        :class="Jason(item).IT.MON.absences.includes(employeeId)?'bg-red-200 text-red-700':'bg-blue-200 text-blue-700'">
-                                        
-                                         {{objectFinder(employees, employeeId).id}}
-                                    {{objectFinder(employees, employeeId).first_name}}
-                                    {{objectFinder(employees, employeeId).last_name}}</div>
-                                </template>
-                                    </TableRowItem>
-                                    </template>
-                            </TableRow>
+            <div class="flex">
+                <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
+                    <TableHead>
+                        <TableHeadItem class="w-10">
+                        </TableHeadItem>
+                        <TableHeadItem class="w-10">
+                            Mon
+                        </TableHeadItem>
+                        <TableHeadItem class="w-10">
+                            Tue
+                        </TableHeadItem>
+                        <TableHeadItem class="w-10">
+                            Wed
+                        </TableHeadItem>
+                        <TableHeadItem class="w-10">
+                            Thu
+                        </TableHeadItem>
+                        <TableHeadItem class="w-10">
+                            Fri
+                        </TableHeadItem>
+                    </TableHead>
+                    <TableBody>
+                        <template v-if="items.length" v-for="item in items" >
+                            <template v-for="(row, rowId) in Jason(item)">
+                                <TableRow>
+                                    <TableHeadItem class="bg-gray-100 h-52 w-10">
+                                        {{ rowId }}
+                                    </TableHeadItem>
+                                        <template v-for="day in days">
+                                            <TableRowItem>
+                                                <template v-for="employeeId in row[day].employees">
+                                                    <div
+                                                        class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1  rounded-full"
+                                                        :class="Jason(item).IT.MON.absences.includes(employeeId)?'bg-red-200 text-red-700':'bg-blue-200 text-blue-700'">
+                                                        
+                                                        {{objectFinder(employees, employeeId).first_name}}
+                                                        {{objectFinder(employees, employeeId).last_name}}
+                                                    </div>
+                                                </template>
+                                                {{ row[day].employees.length }}
+                                            </TableRowItem>
+                                        </template>
+                                </TableRow>
+                            </template>
                         </template>
-                    </template>
-                </TableBody>
-            </table>
-            <div @click="showModal" class="h-10 w-full flex justify-center hover:bg-gray-200">
-                <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 12H20M12 4V20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                        <template v-else>
+                            <TableRowItem colspan="6">
+                                <Modal :buttonId="1" :modals="modals"  :payload="{ id: 1, isOpen: false }">
+                                    <template #button>
+                                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4 12H20M12 4V20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </template>
+                                    <template #content>
+                                        <form @submit.prevent="submit" class="px-2">
+                                            <div class="flex">
+                                                <div class="pr-2 border-r-2">
+                                                    <div class="my-2">
+                                                        <InputLabel for="start_date" value="date debut" />
+                                                            
+                                                        <DateInput
+                                                        id="start_date"
+                                                        class="mt-1 block"
+                                                        v-model="form.start_date"
+                                                        required
+                                                        autofocus
+                                                        autocomplete="start_date"
+                                                        />
+                                                        
+                                                        <InputError class="mt-2" :message="form.errors.end_date" />
+                                                    </div>
+                                                    <div class="my-2">
+                                                        <InputLabel for="end_date" value="date fin" />
+                                                            
+                                                        <DateInput
+                                                        id="end_date"
+                                                        class="mt-1 block"
+                                                        v-model="form.end_date"
+                                                        required
+                                                        autofocus
+                                                        autocomplete="end_date"
+                                                        />
+                                                        
+                                                        <InputError class="mt-2" :message="form.errors.end_date" />
+                                                    </div>
+                                                    <div class="my-2">
+                                                        <InputLabel for="department" value="departments" />
+    
+                                                        <ModelListSelect
+                                                            id="department"
+                                                            :list="departments"
+                                                            optionValue="id"
+                                                            optionText="name"
+                                                            v-model="department"
+                                                            class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm mb-2"
+                                                            placeholder="Choisir une departements">
+                                                        </ModelListSelect>
+                                                        <PrimaryButton @click="addDepartment(form.week_details, department)" :disabled="dep_state">
+                                                            add department
+                                                        </PrimaryButton>
+                                                        <InputError class="mt-2" :message="form.errors.terminal_id" />
+                                                    </div>
+                                                    <div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="block lg:flex">
+
+                                                    <template v-for="day in days">
+                                                        <div class="mx-12 p-12 border w-full">
+                                                            <span class="underline font-bold">{{ day }}</span>
+                                                            <InputLabel for="employees" value="employees" />
+    
+                                                            <MultiSelect
+                                                                id="employees"
+                                                                :list="employees"
+                                                                optionValue="id"
+                                                                optionText="first_name"
+                                                                v-model="form.week_details.department[day]"
+                                                                class="border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-md shadow-sm mb-2"
+                                                                placeholder="Choisir employees">
+                                                            </MultiSelect>
+                                                            <InputError class="mt-2" :message="form.errors.terminal_id" />
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </template>
+                                </Modal>
+                            </TableRowItem>
+                        </template>
+                    </TableBody>
+                </table>
             </div>
-            <Modal :size="size" v-if="isShowModal" @close="closeModal">
-            <template #header>
-                <div class="flex items-center text-lg">
-                Terms of Service
-                </div>
-            </template>
-            <template #footer>
-                <div class="flex justify-between">
-                <button @click="closeModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
-                    Decline
-                </button>
-                <button @click="closeModal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    I accept
-                </button>
-                </div>
-            </template>
-            </Modal>
         </div>
     </AuthenticatedLayout>
 </template>
@@ -98,11 +187,32 @@ export default {
     props: {
         items: Array,
         employees: Array,
+        absences: Array,
+        drivers: Array,
+        terminals: Array,
+        vehicles: Array,
+        departments: Array
     },
     methods:{
+
         Jason(item) {
             return JSON.parse(item.week_details);
         }
-    }
+    },
+    data(){
+        return{
+            modals: [],
+            formData: {
+                planning_type: 'admin',
+                rows: 0,
+                start_date: '',
+                end_date: '',
+                year: '',
+                week_number: null,
+                number_of_columns: 0,
+                week_details: {}
+            }
+        }
+    },
 }
 </script>

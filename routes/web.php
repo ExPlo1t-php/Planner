@@ -11,6 +11,7 @@ use App\Http\Controllers\CRUD\ProjectsController;
 use App\Http\Controllers\CRUD\StationsController;
 use App\Http\Controllers\CRUD\TeamsController;
 use App\Http\Controllers\HRController;
+use App\Http\Controllers\MiscController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -31,8 +32,6 @@ Route::get('/', function () {
     return Inertia::render('Dashboard', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 })->middleware(['auth', 'verified'])->name('home');
 
@@ -44,6 +43,10 @@ Route::middleware('auth')->group(function () {
     // Plannings
     Route::group(['prefix'=>'HR'], function(){
         Route::get('index', [HRController::class, 'index'])->name('HR.index');
+    });
+    // help pages
+    Route::group(['prefix'=>'help'], function(){
+        Route::get('index', [MiscController::class, 'index'])->name('help.index');
     });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -50,6 +50,20 @@ export function checkDateValidity(date){
     }
 }
 
+export function getWeekNumber(){
+    const date = new Date();
+    const startDate = new Date(date.getFullYear(), 0, 1);
+    const days = Math.floor((date - startDate) / (24 * 60 * 60 * 1000));
+    const weekNumber = Math.ceil((days + 1 + startDate.getDay()) / 7);
+    return weekNumber;
+}
+
+export function getCurrentYear() {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  return currentYear;
+}
+
 export function format (value) {
     return moment(value).format('DD-MM-YYYY');
 }
@@ -158,4 +172,27 @@ export function loadAccordionState() {
       });
     }
 }
+/* ========================================================================== */
+
+/* ==================================Planning========================= */
+export function startPlanning(){
+
+}
+
+export function addDepartment(weekDetails, departmentName){
+    if (departmentName && !weekDetails[departmentName]) {
+        weekDetails[departmentName] = {};
+        addDays(weekDetails, departmentName)
+        console.log(weekDetails)
+        return true
+    }
+};
+
+export function addDays(week, department){
+    const days = ['MON','TUE','WED','THU','FRI'];
+    days.forEach(day => {
+        week[department][day] = {}
+    });
+}
+
 /* ========================================================================== */

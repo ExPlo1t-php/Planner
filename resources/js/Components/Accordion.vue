@@ -2,7 +2,7 @@
   <div>
     <button
       @click="toggleCollapse"
-      :class="['flex items-center space-x-3 text-black w-full bg-white p-8 justify-between', { 'collapsed': !isOpen }]"
+      :class="['flex items-center space-x-3 text-black w-full bg-white p-4 justify-between hover:bg-gray-100 active:bg-gray-200', { 'collapsed': !isOpen }]"
       :aria-expanded="isOpen"
       :aria-controls="collapseId"
     >
