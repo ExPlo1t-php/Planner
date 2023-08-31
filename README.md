@@ -8,15 +8,16 @@ Find out about the innovations and major events that form our identity.
 
 ## This Project
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+This app is built using Inertiajs/vue 3, laravel, tailwindcss, with a MySQL database.
+before you start working on the project make sure you run the following commands:
+```bash
+$ composer update
+$ npm update
+$ php artisan migrate:fresh
+$ php artisan serve
+$ npm run dev
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
 ## Technologies
 
@@ -31,5 +32,17 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 </p>
 
 ## Assets
-
-<a href="https://www.flaticon.com/free-icons/beach" title="beach icons">Beach icons created by Freepik - Flaticon</a>
+<a href="https://sortablejs.github.io/vue.draggable.next/#/table-example">https://sortablejs.github.io/vue.draggable.next/#/table-example</a>
+<br>
+<a href="https://gridstackjs.com/">https://gridstackjs.com/</a>
+<br>
+<a href="https://flowbite-vue.com/https://flowbite-vue.com/">https://flowbite-vue.com/</a>
+<br>
+<a href="https://vue-multiselect.js.org/#sub-getting-started">https://vue-multiselect.js.org/#sub-getting-started</a>
+<br>
+<a href="https://vue-search-select.netlify.app/#/model">https://vue-search-select.netlify.app/#/model</a>
+<br>
+<a href="https://www.svgrepo.com/">https://www.svgrepo.com/</a>
+<a href=""></a>
+<a href=""></a>
+<a href=""></a>

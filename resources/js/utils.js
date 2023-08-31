@@ -1,3 +1,7 @@
+/* A bunch of reusable function that's used throughout the application,
+ my apologies since many things are uncommented, I ve tried to rush the development process
+ if you have any questions regarding something, please DM me in discord:         "explo1t."
+*/ 
 import moment from 'moment';
 import {ref} from 'vue'
 
@@ -179,20 +183,24 @@ export function startPlanning(){
 
 }
 
-export function addDepartment(weekDetails, departmentName){
-    if (departmentName && !weekDetails[departmentName]) {
-        weekDetails[departmentName] = {};
-        addDays(weekDetails, departmentName)
-        console.log(weekDetails)
+export function addDepartment(weekDetails, departmentId){
+    const days = ['MON','TUE','WED','THU','FRI'];
+    const departmentExists = weekDetails.some(obj => obj.department == departmentId)
+    if (departmentId && !departmentExists) {
+        const newDepartment = {department: departmentId, days:[]};
+        days.forEach(day => {
+            newDepartment.days.push({
+                day: day,
+                employees: []
+            });
+        });
+        weekDetails.push(newDepartment);
         return true
+    }else{
+        alert('L\'article existe déjà')
     }
 };
 
-export function addDays(week, department){
-    const days = ['MON','TUE','WED','THU','FRI'];
-    days.forEach(day => {
-        week[department][day] = {}
-    });
-}
+
 
 /* ========================================================================== */

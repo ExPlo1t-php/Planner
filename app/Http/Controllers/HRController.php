@@ -16,10 +16,11 @@ use Inertia\Inertia;
 class HRController extends Controller
 {
     public function index(Request $request){
+        // fetching data to use in the Hr planning
         $items = History::get();
         $employees = Employee::whereNot('position_id', 1)
         ->orWhereNot('position_id', 2)
-        ->get();
+        ->select('id', 'first_name', 'last_name', 'employee_number')->get();
         $absences = Absence::get();
         $departments = Department::get();
         $drivers = Driver::get();
