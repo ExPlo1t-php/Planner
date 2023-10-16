@@ -27,7 +27,7 @@
         "gridstack": "^9.0.0",
         "moment": "^2.29.4",
         "nprogress": "^0.2.0",
-        "vue-search-select": "^3.1.2",
+        "vue-search-select": "^3.2.0",
         "vuedraggable": "^4.1.0"
     }
 }
