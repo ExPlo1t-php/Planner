@@ -23,7 +23,7 @@
         "@inertiajs/inertia-vue3": "^0.6.0",
         "@inertiajs/vue3": "^1.0.9",
         "flowbite": "^1.7.0",
-        "flowbite-vue": "^0.0.16",
+        "flowbite-vue": "^0.0.17",
         "gridstack": "^9.0.0",
         "moment": "^2.29.4",
         "nprogress": "^0.2.0",
